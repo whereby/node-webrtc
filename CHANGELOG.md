@@ -1,3 +1,17 @@
+0.9.0
+=====
+
+New Features
+------------
+
+- Added support for RTCRtpTransceiverDirection "stopped".
+  (<https://github.com/node-webrtc/node-webrtc/pull/672>)
+
+Bug Fixes
+---------
+
+- Fixed too-early GCs (<https://github.com/node-webrtc/node-webrtc/pull/667>)
+
 0.8.0
 ======
 

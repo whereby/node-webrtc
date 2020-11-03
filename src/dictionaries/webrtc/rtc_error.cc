@@ -27,8 +27,10 @@ TO_NAPI_IMPL(const webrtc::RTCError *, pair) {
   case webrtc::RTCErrorType::NONE:
     return Validation<Napi::Value>::Invalid(
         "No error? Please file a bug on "
-        "https://github.com/node-webrtc/node-webrtc");
+        "https://github.com/WonderInventions/node-webrtc");
   case webrtc::RTCErrorType::UNSUPPORTED_PARAMETER:
+    return Pure(scope.Escape(
+        ErrorFactory::CreateInvalidModificationError(env, error->message())));
   case webrtc::RTCErrorType::INVALID_PARAMETER:
     return Pure(scope.Escape(
         ErrorFactory::CreateInvalidAccessError(env, error->message())));

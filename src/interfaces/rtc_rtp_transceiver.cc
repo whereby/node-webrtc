@@ -56,8 +56,7 @@ RTCRtpTransceiver::~RTCRtpTransceiver() {
 
   wrap()->Release(this);
   // Decrement refcount from e.g. wrap()->Create if we aren't already down to 0
-  if (!this->Value().IsEmpty())
-  {
+  if (!this->Value().IsEmpty()) {
     this->Unref();
   }
 }
@@ -101,11 +100,12 @@ void RTCRtpTransceiver::SetDirection(const Napi::CallbackInfo &info,
     return;
   }
 
-  auto err =
+  auto error =
       _transceiver->SetDirectionWithError(maybeDirection.UnsafeFromValid());
-  if (!err.ok()) {
-    Napi::Error::New(info.Env(), err.message()).ThrowAsJavaScriptException();
-    return;
+  if (!error.ok()) {
+    CONVERT_OR_THROW_AND_RETURN_VOID_NAPI(info.Env(), &error, result,
+                                          Napi::Value)
+    Napi::Error(info.Env(), result).ThrowAsJavaScriptException();
   }
 }
 
@@ -117,7 +117,11 @@ RTCRtpTransceiver::GetCurrentDirection(const Napi::CallbackInfo &info) {
 }
 
 Napi::Value RTCRtpTransceiver::Stop(const Napi::CallbackInfo &info) {
-  _transceiver->StopStandard();
+  auto error = _transceiver->StopStandard();
+  if (!error.ok()) {
+    CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), &error, result, Napi::Value)
+    Napi::Error(info.Env(), result).ThrowAsJavaScriptException();
+  }
   return info.Env().Undefined();
 }
 

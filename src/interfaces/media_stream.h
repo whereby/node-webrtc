@@ -25,7 +25,7 @@ struct RTCMediaStreamInit;
 
 class MediaStream : public AsyncObjectWrap<MediaStream> {
 public:
-  MediaStream(const Napi::CallbackInfo &);
+  explicit MediaStream(const Napi::CallbackInfo &);
 
   ~MediaStream() override;
 
