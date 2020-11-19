@@ -55,6 +55,10 @@ RTCRtpReceiver::~RTCRtpReceiver() {
   _factory = nullptr;
 
   wrap()->Release(this);
+  // Decrement refcount from e.g. wrap()->Create if we aren't already down to 0
+  if (!this->Value().IsEmpty()) {
+    this->Unref();
+  }
 }
 
 Napi::Value RTCRtpReceiver::GetTrack(const Napi::CallbackInfo &) {
@@ -155,7 +159,9 @@ RTCRtpReceiver *RTCRtpReceiver::Create(
        Napi::External<rtc::scoped_refptr<webrtc::RtpReceiverInterface>>::New(
            env, &receiver)});
 
-  return RTCRtpReceiver::Unwrap(object);
+  auto unwrapped = Unwrap(object);
+  unwrapped->Ref();
+  return unwrapped;
 }
 
 void RTCRtpReceiver::Init(Napi::Env env, Napi::Object exports) {

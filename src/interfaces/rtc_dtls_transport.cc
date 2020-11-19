@@ -93,6 +93,12 @@ RTCDtlsTransport::~RTCDtlsTransport() {
   Napi::HandleScope scope(PeerConnectionFactory::constructor().Env());
   _factory->Unref();
   _factory = nullptr;
+
+  wrap()->Release(this);
+  // Decrement refcount from e.g. wrap()->Create if we aren't already down to 0
+  if (!this->Value().IsEmpty()) {
+    this->Unref();
+  }
 }
 
 void RTCDtlsTransport::Stop() {
@@ -190,7 +196,9 @@ RTCDtlsTransport *RTCDtlsTransport::Create(
        Napi::External<rtc::scoped_refptr<webrtc::DtlsTransportInterface>>::New(
            env, &transport)});
 
-  return RTCDtlsTransport::Unwrap(object);
+  auto unwrapped = Unwrap(object);
+  unwrapped->Ref();
+  return unwrapped;
 }
 
 void RTCDtlsTransport::Init(Napi::Env env, Napi::Object exports) {

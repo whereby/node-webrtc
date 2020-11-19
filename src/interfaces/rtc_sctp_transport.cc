@@ -59,6 +59,10 @@ RTCSctpTransport::~RTCSctpTransport() {
   _factory->Unref();
   _factory = nullptr;
   wrap()->Release(this);
+  // Decrement refcount from e.g. wrap()->Create if we aren't already down to 0
+  if (!this->Value().IsEmpty()) {
+    this->Unref();
+  }
 }
 
 void RTCSctpTransport::Stop() {
@@ -80,14 +84,15 @@ RTCSctpTransport *RTCSctpTransport::Create(
     PeerConnectionFactory *factory,
     rtc::scoped_refptr<webrtc::SctpTransportInterface> transport) {
   auto env = constructor().Env();
-  Napi::HandleScope scope(env);
 
   auto object = constructor().New(
       {factory->Value(),
        Napi::External<rtc::scoped_refptr<webrtc::SctpTransportInterface>>::New(
            env, &transport)});
 
-  return RTCSctpTransport::Unwrap(object);
+  auto unwrapped = Unwrap(object);
+  unwrapped->Ref();
+  return unwrapped;
 }
 
 void RTCSctpTransport::OnStateChange(
