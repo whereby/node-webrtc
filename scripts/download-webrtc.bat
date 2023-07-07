@@ -14,7 +14,7 @@ CALL gclient config --unmanaged --spec solutions=[{\"name\":\"src\",\"url\":\"ht
 IF %ERRORLEVEL% NEQ 0 GOTO ERROR
 
 ECHO gclient sync
-CALL gclient sync --shallow --no-history --nohooks --with_branch_heads -r %WEBRTC_REVISION% -R
+CALL gclient sync --nohooks --with_branch_heads -r %WEBRTC_REVISION% -R
 IF %ERRORLEVEL% NEQ 0 GOTO ERROR
 
 ECHO lastchange

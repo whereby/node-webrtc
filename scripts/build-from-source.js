@@ -8,30 +8,31 @@ const args = ['configure'];
 
 if (process.env.DEBUG) {
   args.push('--debug');
+  args.push('--CDCMAKE_EXPORT_COMPILE_COMMANDS=1');
 }
 
 if (process.platform === 'win32') {
-  args.push('-g');
-  args.push('"Visual Studio 16 2019"');
+  args.push('-G');
+  args.push('Ninja');
 }
 
 function main() {
-  console.log('Running ncmake ' + args.join(' '));
-  let { status } = spawnSync('ncmake', args, {
+  console.log('Running cmake-js ' + args.join(' '));
+  let { status } = spawnSync('cmake-js', args, {
     shell: true,
     stdio: 'inherit'
   });
   if (status) {
-    throw new Error('ncmake configure failed for wrtc');
+    throw new Error('cmake-js configure failed for wrtc');
   }
 
-  console.log('Running ncmake build');
-  status = spawnSync('ncmake', ['build'], {
+  console.log('Running cmake-js build');
+  status = spawnSync('cmake-js', ['build'], {
     shell: true,
     stdio: 'inherit'
   }).status;
   if (status) {
-    throw new Error('ncmake build failed for wrtc');
+    throw new Error('cmake-js build failed for wrtc');
   }
 
   console.log('Built wrtc');

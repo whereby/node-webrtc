@@ -6,7 +6,7 @@ class I420Frame {
   constructor(width = 640, height = 480) {
     this.width = width;
     this.height = height;
-    this.data = new Uint8ClampedArray(this.byteLength);
+    this.data = new Uint8Array(this.byteLength);
     Object.freeze(this);
   }
 

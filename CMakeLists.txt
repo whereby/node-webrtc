@@ -1,4 +1,9 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
+cmake_policy(SET CMP0091 NEW)
+cmake_policy(SET CMP0042 NEW)
+
+set(MODULE wrtc)
+project(${MODULE})
 
 include(ExternalProject)
 find_package(Git REQUIRED)
@@ -13,7 +18,7 @@ ExternalProject_Add(
   project_depot_tools
 
   GIT_REPOSITORY    https://chromium.googlesource.com/chromium/tools/depot_tools.git
-  GIT_TAG           2fddb95698211db1373ebe2b16091a54eac51c9c
+  GIT_TAG           631522ca84713b20523c7e95d99f70f0c38a6d5c
 
   PREFIX            ${CMAKE_BINARY_DIR}/external/depot_tools/prefix
   TMP_DIR           ${CMAKE_BINARY_DIR}/external/depot_tools/tmp
@@ -124,15 +129,18 @@ set_target_properties(libc++abi PROPERTIES IMPORTED_OBJECTS_DEBUG "${libc++abi_o
 # libwebrtc
 # -----------------------------------------------------------------------------
 
+# M87: branch-heads/4280
+# M92: branch-heads/4515
 set(WEBRTC_REVISION branch-heads/4280)
 
 list(APPEND GN_GEN_ARGS
   rtc_build_examples=false
   rtc_use_x11=false
   rtc_enable_protobuf=false
-  rtc_use_gtk=false
   rtc_include_pulse_audio=false
   rtc_include_tests=false
+  use_lld=false
+  use_custom_libcxx=false
 )
 if ("$ENV{TARGET_ARCH}" STREQUAL "arm")
   list(APPEND GN_GEN_ARGS
@@ -156,9 +164,9 @@ else()
   )
 endif()
 
-if (WIN32)
-  list(APPEND GN_GEN_ARGS is_clang=false)
-endif()
+# if (WIN32)
+#   list(APPEND GN_GEN_ARGS is_clang=false)
+# endif()
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   list(APPEND GN_GEN_ARGS is_debug=true)
 else()
@@ -277,27 +285,10 @@ set(catch2_install_dir ${SOURCE_DIR})
 # node-webrtc
 # -----------------------------------------------------------------------------
 
-set(MODULE wrtc)
-include(${CMAKE_SOURCE_DIR}/NodeJS.cmake)
-if(DEFINED ENV{npm_config_runtime})
-  if($ENV{npm_config_runtime} STREQUAL "electron")
-    if(NOT DEFINED ENV{npm_config_target})
-      message(FATAL_ERROR "npm_config_target must be defined for electron build")
-    endif()
-    list(APPEND nodejs_init_args "VERSION" v$ENV{npm_config_target})
-    if(NOT DEFINED ENV{npm_config_disturl})
-      message(FATAL_ERROR "npm_config_disturl must be defined for electron build")
-    endif()
-    list(APPEND nodejs_init_args "URL" $ENV{npm_config_disturl})
-    if($ENV{npm_config_target} STRLESS "4")
-      list(APPEND nodejs_init_args "NAME" "iojs")
-    endif()
-  endif()
-endif()
-nodejs_init(${nodejs_init_args})
-
 file(GLOB_RECURSE MODULE_SRC src/*.cc src/*.h)
-add_nodejs_module(${MODULE} ${MODULE_SRC})
+add_library(${MODULE} SHARED ${MODULE_SRC} ${CMAKE_JS_SRC})
+set_target_properties(${MODULE} PROPERTIES PREFIX "" SUFFIX ".node")
+
 set_property(TARGET ${MODULE} PROPERTY CXX_STANDARD 14)
 
 if(NOT iwyu_path STREQUAL "iwyu_path-NOTFOUND")
@@ -308,15 +299,14 @@ if(NOT clang_tidy_path STREQUAL "clang_tidy_path-NOTFOUND")
   set_property(TARGET ${MODULE} PROPERTY CXX_CLANG_TIDY ${clang_tidy_path})
 endif()
 
-set(node_addon_api_dir ${CMAKE_SOURCE_DIR}/node_modules/node-addon-api)
-
 # NOTE(mroberts): Workaround for
 #
 #   https://gitlab.kitware.com/cmake/cmake/issues/15052
 #
 # is to include all the header files here.
 target_include_directories(${MODULE} SYSTEM PRIVATE
-  ${node_addon_api_dir}/..
+  ${CMAKE_JS_INC}
+  ${CMAKE_SOURCE_DIR}/node_modules
   ${libwebrtc_source_dir}
   ${libwebrtc_source_dir}/webrtc
   ${libwebrtc_source_dir}/webrtc/third_party/abseil-cpp
@@ -338,6 +328,7 @@ target_link_libraries(${MODULE} PRIVATE
   ${CMAKE_THREAD_LIBS_INIT}
   libpeerconnection
   libwebrtc
+  ${CMAKE_JS_LIB}
 )
 
 target_compile_definitions(${MODULE} PRIVATE
@@ -346,9 +337,7 @@ target_compile_definitions(${MODULE} PRIVATE
 )
 
 if(WIN32)
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /GR-")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd /GR- -D_HAS_ITERATOR_DEBUGGING=0")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /FORCE:UNRESOLVED")
+  set_property(TARGET ${MODULE} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
   target_link_libraries(${MODULE} PRIVATE
     dmoguids.lib
@@ -360,6 +349,7 @@ if(WIN32)
   )
 
   target_compile_definitions(${MODULE} PRIVATE
+    "$<$<CONFIG:Debug>:-D_HAS_ITERATOR_DEBUGGING=0>"
     -D_WINSOCKAPI_
     -DINCL_EXTRA_HTON_FUNCTIONS
     -DNOGDI

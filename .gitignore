@@ -1,8 +1,12 @@
 *\~
 *.swp
+.cache
+.travis.yml
 .idea
+.vs
 .DS_Store
 build
+compile_commands.json
 example
 node_modules
 npm-debug.log*

@@ -1,7 +1,5 @@
 'use strict';
 
-// const semver = require('semver');
-
 require('./addicecandidate');
 require('./closing-data-channel');
 require('./closing-peer-connection');
@@ -30,6 +28,7 @@ require('./sessiondesc');
 // that destructors fire at the appropriate time (and hence, no memory leaks
 // occur). Once we drop support for Node < 9, remove this.
 // TODO: this need to be fixed
+// const semver = require('semver');
 // if (semver(process.version).major >= 9 && typeof gc === 'function') {
 //   require('./destructor');
 // }
