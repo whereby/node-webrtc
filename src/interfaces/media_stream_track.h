@@ -66,6 +66,7 @@ class MediaStreamTrack
 
   Napi::Value Clone(const Napi::CallbackInfo&);
   Napi::Value JsStop(const Napi::CallbackInfo&);
+  Napi::Value GetSettings(const Napi::CallbackInfo& info);
 
   bool _ended = false;
   bool _enabled;

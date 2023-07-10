@@ -7,6 +7,7 @@ require('./connect');
 require('./create-offer');
 require('./custom-settings');
 require('./get-configuration');
+require('./get-settings');
 require('./i420helpers');
 require('./iceservers');
 require('./mediastream');

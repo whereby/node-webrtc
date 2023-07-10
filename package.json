@@ -48,10 +48,9 @@
   "scripts": {
     "install": "node scripts/download-prebuilt-or-build-from-source.js",
     "install-example": "node scripts/install-example.js",
-    "lint": "eslint lib/*.js lib/**/*.js test/*.js test/**/*.js karma/*.js scripts/*.js",
+    "lint": "eslint lib/*.js lib/**/*.js test/*.js test/**/*.js scripts/*.js",
     "publish-binary": "node scripts/publish.js",
-    "test": "node --expose-gc test/all.js",
-    "test:electron": "electron test/electron"
+    "test": "node --expose-gc test/all.js"
   },
   "bundleDependencies": [
     "@mapbox/node-pre-gyp"

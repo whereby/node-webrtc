@@ -7,11 +7,13 @@
  */
 #include "src/interfaces/media_stream_track.h"
 
+#include <node-addon-api/napi.h>
 #include <webrtc/api/peer_connection_interface.h>
 #include <webrtc/rtc_base/helpers.h>
 
 #include "src/converters.h"
 #include "src/converters/interfaces.h"
+#include "src/dictionaries/node_webrtc/media_track_settings.h"
 #include "src/enums/webrtc/track_state.h"
 #include "src/interfaces/rtc_peer_connection/peer_connection_factory.h"
 
@@ -136,6 +138,38 @@ Napi::Value MediaStreamTrack::JsStop(const Napi::CallbackInfo& info) {
   return info.Env().Undefined();
 }
 
+Napi::Value MediaStreamTrack::GetSettings(const Napi::CallbackInfo& info) {
+  // FIXME(jack): find some way to get the real settings.
+  if (_track->kind() == _track->kAudioKind) {
+    auto settings = AudioMediaTrackSettings{
+      .deviceId = "FakeAudioDevice",
+      .groupId = "FakeDeviceGroup",
+      .autoGainControl = false,
+      .echoCancellation = false,
+      .noiseSuppression = false,
+      .channelCount = 1,
+      .sampleRate = 48000,
+      .sampleSize = 16,
+      .latency = 0.0,
+      .volume = 0.25,
+    };
+    CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), settings, result, Napi::Value);
+    return result;
+  }
+  assert(_track->kind() == _track->kVideoKind);
+  auto settings = VideoMediaTrackSettings{
+    .deviceId = "FakeVideoDevice",
+    .groupId = "FakeDeviceGroup",
+    .height = 480,
+    .width = 640,
+    .aspectRatio = 640.0 / 480.0,
+    .frameRate = 30.0,
+    .facingMode = "user",
+  };
+  CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), settings, result, Napi::Value);
+  return result;
+}
+
 Wrap <
 MediaStreamTrack*,
 rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>,
@@ -171,7 +205,8 @@ void MediaStreamTrack::Init(Napi::Env env, Napi::Object exports) {
     InstanceAccessor("readyState", &MediaStreamTrack::GetReadyState, nullptr),
     InstanceAccessor("muted", &MediaStreamTrack::GetMuted, nullptr),
     InstanceMethod("clone", &MediaStreamTrack::Clone),
-    InstanceMethod("stop", &MediaStreamTrack::JsStop)
+    InstanceMethod("stop", &MediaStreamTrack::JsStop),
+    InstanceMethod("getSettings", &MediaStreamTrack::GetSettings),
   });
 
   constructor() = Napi::Persistent(func);
