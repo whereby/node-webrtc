@@ -69,6 +69,7 @@ MediaStream::Impl::Impl(const RTCMediaStreamInit& init,
 
 MediaStream::Impl::~Impl() {
   Napi::HandleScope scope(PeerConnectionFactory::constructor().Env());
+
   if (_factory) {
     _factory->Unref();  // NOLINT
     _factory = nullptr;
@@ -141,6 +142,16 @@ MediaStream::MediaStream(const Napi::CallbackInfo& info): Napi::ObjectWrap<Media
       }
     }
   }
+}
+
+MediaStream::~MediaStream() {
+  // TODO(jack): figure out what this does, exactly. I think I need it?
+  Napi::HandleScope scope(PeerConnectionFactory::constructor().Env());
+
+  // Rest of the destructor logic taken care of by individual fields
+  // (especially Impl), but this is required to not use freed MediaStream* from
+  // wrap()->GetOrCreate()
+  wrap()->Release(this);
 }
 
 Napi::Value MediaStream::GetId(const Napi::CallbackInfo& info) {

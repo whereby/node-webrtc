@@ -34,9 +34,9 @@ Napi::FunctionReference& PeerConnectionFactory::constructor() {
   return constructor;
 }
 
-PeerConnectionFactory* PeerConnectionFactory::_default = nullptr;
+PeerConnectionFactory* PeerConnectionFactory::_default = nullptr; // NOLINT
 std::mutex PeerConnectionFactory::_mutex{};  // NOLINT
-int PeerConnectionFactory::_references = 0;
+int PeerConnectionFactory::_references = 0; // NOLINT
 
 PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<PeerConnectionFactory>(info) {
@@ -155,10 +155,7 @@ void PeerConnectionFactory::Dispose() {
 }
 
 void PeerConnectionFactory::Init(Napi::Env env, Napi::Object exports) {
-  bool result;
-  (void) result;
-
-  result = rtc::InitializeSSL();
+  bool result = rtc::InitializeSSL();
   assert(result);
 
   auto func = DefineClass(env, "RTCPeerConnectionFactory", {});

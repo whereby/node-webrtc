@@ -29,6 +29,8 @@ class MediaStream
  public:
   MediaStream(const Napi::CallbackInfo&);
 
+  ~MediaStream() override;
+
   static void Init(Napi::Env, Napi::Object);
 
   static Napi::FunctionReference& constructor();
