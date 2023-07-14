@@ -357,30 +357,14 @@ if(WIN32)
     -DWEBRTC_WIN
   )
 else()
-  # NOTE(mroberts): Workaround for
-  #
-  #   https://gitlab.kitware.com/cmake/cmake/issues/15052
-  #
-  # is to include all the header files here.
-  target_include_directories(${MODULE} SYSTEM PRIVATE
-    ${libc++_include_dir}
-    ${libc++abi_include_dir}
-  )
-
-  # NOTE(mroberts): On Linux and macOS, we statically link the same libc++ and
-  # libc++abi libraries that libwebrtc builds against.
   target_link_libraries(${MODULE} PRIVATE
     -lc
     -lm
-    libc++
-    libc++abi
   )
 
   target_compile_options(${MODULE} PRIVATE
     -fno-rtti
     -fvisibility=hidden
-    -nostdinc++
-    -nodefaultlibs
     -Wall
     -Wextra
     -Wno-missing-field-initializers
@@ -388,20 +372,39 @@ else()
     -Wno-unused-local-typedefs
     -Wno-unused-variable
     -Wpedantic
+    "$<$<CONFIG:Debug>:-g>"
   )
 
   target_compile_definitions(${MODULE} PRIVATE
-    -D_LIBCPP_ABI_UNSTABLE
     -DWEBRTC_POSIX=1
+    "$<$<CONFIG:Debug>:-DDEBUG>"
   )
 
-  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if (APPLE OR "$ENV{TARGET_ARCH}" STREQUAL "arm" OR "$ENV{TARGET_ARCH}" STREQUAL "arm64")
+    # NOTE(mroberts): Workaround for
+    #
+    #   https://gitlab.kitware.com/cmake/cmake/issues/15052
+    #
+    # is to include all the header files here.
+    target_include_directories(${MODULE} SYSTEM PRIVATE
+      ${libc++_include_dir}
+      ${libc++abi_include_dir}
+    )
+
+  # NOTE(mroberts): On Arm Linux and macOS, we statically link the same libc++ and
+    # libc++abi libraries that libwebrtc builds against.
+    target_link_libraries(${MODULE} PRIVATE
+      libc++
+      libc++abi
+    )
+
     target_compile_options(${MODULE} PRIVATE
-      -g
+      -nostdinc++
+      -nodefaultlibs
     )
 
     target_compile_definitions(${MODULE} PRIVATE
-      -DDEBUG
+      -D_LIBCPP_ABI_UNSTABLE
     )
   endif()
 
@@ -430,7 +433,6 @@ else()
     )
 
     target_compile_definitions(${MODULE} PRIVATE
-      -D_LIBCPP_ABI_UNSTABLE
       -DWEBRTC_MAC
       -DWEBRTC_IOS
     )
@@ -468,11 +470,6 @@ else()
         set(CMAKE_C_COMPILER ${tools}/bin/aarch64-linux-gnu-gcc)
         set(CMAKE_CXX_COMPILER ${tools}/bin/aarch64-linux-gnu-g++)
       endif()
-    else()
-      target_compile_options(${MODULE} PRIVATE
-        -B${libwebrtc_source_dir}/src/third_party/binutils/Linux_x64/Release/bin
-        --sysroot=${libwebrtc_source_dir}/src/build/linux/debian_sid_amd64-sysroot
-      )
     endif()
   endif()
 endif()

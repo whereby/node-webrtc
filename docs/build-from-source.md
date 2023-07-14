@@ -48,9 +48,17 @@ command-line options to `ncmake`.
 
 ### Linux
 
-On Linux, we statically link libc++ and libc++abi. Also, although we compile
-WebRTC sources with Clang (downloaded as part of WebRTC's build process), we
-compile node-webrtc sources with GCC 5.4 or newer.
+On Linux, we dynamically link against the platform's libc and libc++.
+Also, although we compile WebRTC sources with Clang (downloaded as part of
+WebRTC's build process), we compile node-webrtc sources with the platform's
+complier
+
+> **Note**
+> Because of build system weirdness, the `scripts/build-webrtc.sh` script
+> does not fully work when run from cmake. Go to
+> `build/external/libwebrtc/build/{Debug,Release}`, add the `depot_tools` to
+> your path, and run `ninja -j 8 webrtc libjingle_peerconnection` manually.
+> sorry idk why this happens, will work on a fix eventually.
 
 #### armv7l
 
