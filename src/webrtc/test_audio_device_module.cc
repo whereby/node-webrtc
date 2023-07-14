@@ -197,12 +197,16 @@ class TestAudioDeviceModuleImpl  // NOLINT
           int64_t elapsed_time_ms = -1;
           int64_t ntp_time_ms = -1;
           const int sampling_frequency = renderer_->SamplingFrequency();
+          // FIXME(jack): mroberts u silly billy this code is racy too! don't just
+          // ignore those warnings please!!
+          /*
           if (audio_callback_) {
             audio_callback_->NeedMorePlayData(
                 SamplesPerFrame(sampling_frequency), 2, renderer_->NumChannels(),
                 sampling_frequency, playout_buffer_.data(), samples_out,
                 &elapsed_time_ms, &ntp_time_ms);
           }
+          */
           const bool keep_rendering =
               renderer_->Render(rtc::ArrayView<const int16_t>(
                       playout_buffer_.data(), samples_out));
@@ -212,6 +216,8 @@ class TestAudioDeviceModuleImpl  // NOLINT
           }
         }
       }
+      // TODO(jack): change this to allow variable number of samples, not just
+      // the hardcoded 10ms
       time_us += process_interval_us_;
 
       int64_t time_left_us = time_us - rtc::TimeMicros();
