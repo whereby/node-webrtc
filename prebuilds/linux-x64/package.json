@@ -1,0 +1,13 @@
+{
+  "name": "@roamhq/wrtc-linux-x64",
+  "version": "0.5.0",
+  "description": "The Linux 64-bit binary for wrtc.",
+  "repository": "https://github.com/WonderInventions/wrtc",
+  "license": "BSD-2-Clause",
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64"
+  ]
+}
