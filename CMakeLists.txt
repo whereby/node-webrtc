@@ -140,8 +140,18 @@ list(APPEND GN_GEN_ARGS
   rtc_include_pulse_audio=false
   rtc_include_tests=false
   use_lld=false
-  use_custom_libcxx=false
 )
+
+if (APPLE)
+  list(APPEND GN_GEN_ARGS
+    use_custom_libcxx=true
+  )
+else()
+  list(APPEND GN_GEN_ARGS
+    use_custom_libcxx=false
+  )
+endif()
+
 if ("$ENV{TARGET_ARCH}" STREQUAL "arm")
   list(APPEND GN_GEN_ARGS
     target_os="linux"

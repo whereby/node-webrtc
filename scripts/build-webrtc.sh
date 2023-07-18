@@ -4,14 +4,13 @@ set -e
 
 set -v
 
-echo $DEPOT_TOOLS
 export PATH=$DEPOT_TOOLS:$PATH
-echo $PATH
 
 export TARGETS="webrtc libjingle_peerconnection"
-if [[ "$TARGET_ARCH" == arm* ]]; then
-  export TARGETS="$TARGETS pc:peerconnection libc++ libc++abi"
-fi
+case "$(uname -s)" in
+  Darwin*)
+  export TARGETS="$TARGETS libc++ libc++abi"
+esac
 
 # if [ -z "$PARALLELISM" ]; then
 #   ninja $TARGETS
