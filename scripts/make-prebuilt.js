@@ -10,7 +10,11 @@ const os = require('os');
 child_process.execSync('npm run build', { stdio: 'inherit' });
 
 // Copy the resulting binary to the output folder
-const input_folder = 'build/Release';
+let input_folder = 'build';
+// Windows whyyyy
+if (os.platform() !== 'win32') {
+  input_folder = `${input_folder}/Release`;
+}
 const output_folder = `prebuilds/${os.platform()}-${os.arch()}`;
 fs.copyFileSync(
   `${input_folder}/wrtc.node`,
