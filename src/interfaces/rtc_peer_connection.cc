@@ -226,6 +226,11 @@ void RTCPeerConnection::OnTrack(rtc::scoped_refptr<webrtc::RtpTransceiverInterfa
   auto receiver = transceiver->receiver();
   auto streams = receiver->streams();
   Dispatch(CreateCallback<RTCPeerConnection>([this, transceiver, receiver, streams]() {
+    if (_factory == nullptr) {
+      // We have closed, but have not processed close event to stop the event
+      // loop yet. In that case, we should not be broadcasting this event
+      return;
+    }
     auto mediaStreams = std::vector<MediaStream*>();
     for (auto const& stream : streams) {
       auto mediaStream = MediaStream::wrap()->GetOrCreate(_factory, stream);

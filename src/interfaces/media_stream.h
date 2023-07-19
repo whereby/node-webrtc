@@ -11,12 +11,11 @@
 
 #include <node-addon-api/napi.h>
 #include <webrtc/api/scoped_refptr.h>
+#include <webrtc/api/media_stream_interface.h>
 
 #include "src/converters/napi.h"
+#include "src/node/async_object_wrap.h"
 #include "src/node/wrap.h"
-
-namespace webrtc { class MediaStreamInterface; }
-namespace webrtc { class MediaStreamTrackInterface; }
 
 namespace node_webrtc {
 
@@ -24,8 +23,7 @@ class MediaStreamTrack;
 class PeerConnectionFactory;
 struct RTCMediaStreamInit;
 
-class MediaStream
-  : public Napi::ObjectWrap<MediaStream> {
+class MediaStream : public AsyncObjectWrap<MediaStream> {
  public:
   MediaStream(const Napi::CallbackInfo&);
 

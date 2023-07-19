@@ -94,7 +94,8 @@ rtc::scoped_refptr<webrtc::MediaStreamInterface> MediaStream::stream() {
   return _impl._stream;
 }
 
-MediaStream::MediaStream(const Napi::CallbackInfo& info): Napi::ObjectWrap<MediaStream>(info) {
+MediaStream::MediaStream(const Napi::CallbackInfo& info):
+  AsyncObjectWrap<MediaStream>("MediaStream", info) {
   auto maybeEither = From<Either<std::tuple<Napi::Object COMMA Napi::External<rtc::scoped_refptr<webrtc::MediaStreamInterface>>> COMMA   // Either1 - Remote MediaStream OR Either2
       Either<std::vector<MediaStreamTrack*> COMMA                                                                  // Either2 - Array of MediaStreamTracks OR Either3
       Either<MediaStream* COMMA                                                                                  // Either3 - Local MediaStream OR Maybe

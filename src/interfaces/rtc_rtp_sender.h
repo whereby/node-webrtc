@@ -16,8 +16,6 @@
 #include "src/node/async_object_wrap.h"
 #include "src/node/wrap.h"
 
-namespace webrtc { class RtpSenderInterface; }
-
 namespace node_webrtc {
 
 class PeerConnectionFactory;
@@ -40,7 +38,7 @@ class RTCRtpSender: public AsyncObjectWrap<RTCRtpSender> {
 
   static Napi::FunctionReference& constructor();
 
- private:
+private:
   static RTCRtpSender* Create(
       PeerConnectionFactory*,
       rtc::scoped_refptr<webrtc::RtpSenderInterface>);
