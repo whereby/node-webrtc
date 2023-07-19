@@ -24,6 +24,7 @@
   "dependencies": {},
   "optionalDependencies": {
     "@roamhq/wrtc-linux-x64": "0.5.0",
+    "@roamhq/wrtc-darwin-x64": "0.5.0",
     "domexception": "^4.0.0"
   },
   "devDependencies": {
