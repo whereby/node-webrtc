@@ -6,7 +6,7 @@
     "p2p",
     "peer"
   ],
-  "version": "0.5.1",
+  "version": "0.5.2",
   "author": "Alan K <ack@modeswitch.org> (http://blog.modeswitch.org)",
   "homepage": "https://github.com/WonderInventions/node-webrtc",
   "bugs": "https://github.com/WonderInventions/node-webrtc/issues",
@@ -16,11 +16,13 @@
     "url": "http://github.com/WonderInventions/node-webrtc.git"
   },
   "main": "lib/index.js",
+  "types": "types/index.d.ts",
   "browser": "lib/browser.js",
   "files": [
     "AUTHORS",
     "CHANGELOG.md",
-    "lib"
+    "lib",
+    "types"
   ],
   "dependencies": {},
   "optionalDependencies": {
