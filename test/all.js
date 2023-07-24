@@ -1,5 +1,7 @@
 'use strict';
 
+//require('child_process').spawnSync('pause', {shell: true, stdio: 'inherit'});
+
 require('./addicecandidate');
 require('./closing-data-channel');
 require('./closing-peer-connection');
@@ -24,6 +26,7 @@ require('./rtcvideosink');
 require('./rtcvideosource');
 require('./send-arraybuffer');
 require('./sessiondesc');
+
 
 // TODO(mroberts): async_hooks were introduced in Node 9. We use them to test
 // that destructors fire at the appropriate time (and hence, no memory leaks

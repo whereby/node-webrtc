@@ -11,7 +11,7 @@ tape('connect once', function(t) {
   t.plan(1);
   log('###########################\n');
   connect(function(err) {
-    t.error(err, 'connect callback');
+    t.error(err, 'connect once callback');
   });
 });
 
@@ -19,7 +19,7 @@ tape('connect loop', function(t) {
   t.plan(1);
   log('###########################\n');
   connectLoop(10, function(err) {
-    t.error(err, 'connect callback');
+    t.error(err, 'connect loop callback');
   });
 });
 
@@ -32,7 +32,7 @@ tape('connect concurrent', function(t) {
   }
 
   function callback(err) {
-    t.error(err, 'connect callback');
+    t.error(err, 'connect concurrent callback');
   }
 });
 
@@ -45,7 +45,7 @@ tape('connect loop concurrent', function(t) {
   }
 
   function callback(err) {
-    t.error(err, 'connect callback');
+    t.error(err, 'connect loop concurrent callback');
   }
 });
 
