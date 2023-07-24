@@ -38,6 +38,8 @@ class RTCRtpReceiver: public AsyncObjectWrap<RTCRtpReceiver> {
 
   static Napi::FunctionReference& constructor();
 
+  rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver() { return _receiver; }
+
  private:
   static RTCRtpReceiver* Create(
       PeerConnectionFactory*,

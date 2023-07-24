@@ -1,3 +1,33 @@
+0.6.0
+=====
+
+New Features
+------------
+
+- `RTCPeerConnection.getStats()` can now take in a `MediaStreamTrack` as a
+  selector, updating that API to the latest WebRTC standard.
+- Typescript definition files provided to let this library (somewhat
+  inaccurately, unfortunately) polyfill for WebRTC types included with the
+  standard, and also define the `nonstandard` types.
+
+0.5.1
+=====
+
+Bug Fixes
+---------
+
+- Take care of case where `RTCPeerConnection` is closed while `OnTrack` events
+  are still pending.
+
+0.5.0
+=====
+
+New Features
+------------
+
+- Support Node 18, with updated build system
+- Newer prebuilt binary system not dependent on node-pre-gyp
+
 0.4.6
 =====
 

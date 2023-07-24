@@ -546,8 +546,55 @@ Napi::Value RTCPeerConnection::GetStats(const Napi::CallbackInfo& info) {
     return deferred.Promise();
   }
 
+  CONVERT_ARGS_OR_REJECT_AND_RETURN_NAPI(deferred, info, maybeSelector, Maybe<MediaStreamTrack*>);
+
   auto callback = new rtc::RefCountedObject<RTCStatsCollector>(this, deferred);
-  _jinglePeerConnection->GetStats(callback);
+  if (maybeSelector.IsJust()) {
+    auto selector = maybeSelector.UnsafeFromJust();
+    auto track = selector->track();
+    // A little silly that the Javascript API is based off Tracks, but the
+    // internal API needs an explicit sender or receiver.
+    // Copying [what blink does](https://chromium.googlesource.com/chromium/src/+/refs/tags/114.0.5735.227/third_party/blink/renderer/modules/peerconnection/rtc_peer_connection.cc#1791)
+    // and iterating through all senders and receivers until we find a match.
+    size_t track_uses = 0U;
+
+    rtc::scoped_refptr<webrtc::RtpSenderInterface> track_sender = nullptr;
+    for (const auto& sender : _jinglePeerConnection->GetSenders()) {
+      if (sender->track() == track) {
+        ++track_uses;
+        track_sender = sender;
+      }
+    }
+
+    rtc::scoped_refptr<webrtc::RtpReceiverInterface> track_receiver = nullptr;
+    for (const auto& receiver : _jinglePeerConnection->GetReceivers()) {
+      if (receiver->track() == track) {
+        ++track_uses;
+        track_receiver = receiver;
+      }
+    }
+
+    if (track_uses == 0U) {
+      Reject(deferred, ErrorFactory::CreateInvalidAccessError(env, "There is no sender or receiver for the track."));
+      return deferred.Promise();
+    }
+
+    if (track_uses > 1U) {
+      Reject(deferred, ErrorFactory::CreateInvalidAccessError(env, "There are more than one sender or receiver for the track."));
+      return deferred.Promise();
+    }
+
+    if (track_sender != nullptr) {
+      assert(track_receiver == nullptr);
+      _jinglePeerConnection->GetStats(track_sender, callback);
+    } else {
+      assert(track_receiver != nullptr);
+      _jinglePeerConnection->GetStats(track_receiver, callback);
+    }
+  } else {
+    // null selector
+    _jinglePeerConnection->GetStats(callback);
+  }
 
   return deferred.Promise();  // NOLINT
 }

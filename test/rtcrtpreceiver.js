@@ -75,6 +75,25 @@ var sdp2 = [
   'a=rtcp-mux',
 ].join('\r\n') + '\r\n';
 
+tape('getStats(receiver)', function(t) {
+  var pc = new RTCPeerConnection();
+  var offer = new RTCSessionDescription({ type: 'offer', sdp: sdp1 });
+  pc.setRemoteDescription(offer).then(function() {
+    return pc.getReceivers();
+  }).then(function(receivers) {
+    return Promise.all(receivers.map(function(receiver) {
+      return pc.getStats(receiver.track);
+    }));
+  }).then(function(statReports) {
+    t.ok(statReports.every(function(stats) {
+      // Just make sure the stats objects exist
+      return !!stats;
+    }));
+    pc.close();
+    t.end();
+  });
+});
+
 tape('applying a remote offer creates receivers (checked via .getReceivers)', function(t) {
   // NOTE(mroberts): Create and close the RTCPeerConnection inside a Promise,
   // then delay with setTimeout so that we can test accessing getReceivers after

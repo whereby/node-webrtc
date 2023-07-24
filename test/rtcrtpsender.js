@@ -134,6 +134,25 @@ tape('.replaceTrack(null)', function(t) {
   });
 });
 
+tape('getStats(sender)', function(t) {
+  return getMediaStream().then(function(stream) {
+    var pc = new RTCPeerConnection();
+    var senders = stream.getTracks().map(function(track) {
+      return pc.addTrack(track, stream);
+    });
+    return Promise.all(senders.map(function(sender) {
+      return pc.getStats(sender.track);
+    })).then(function(statReports) {
+      t.ok(statReports.every(function(stats) {
+        // Just make sure the objects exist
+        return !!stats;
+      }));
+      pc.close();
+      t.end();
+    });
+  });
+});
+
 function getMediaStream() {
   var pc = new RTCPeerConnection();
   var offer = new RTCSessionDescription({ type: 'offer', sdp: sdp });
