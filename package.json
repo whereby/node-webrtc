@@ -6,7 +6,7 @@
     "p2p",
     "peer"
   ],
-  "version": "0.5.2",
+  "version": "0.6.0",
   "author": "Alan K <ack@modeswitch.org> (http://blog.modeswitch.org)",
   "homepage": "https://github.com/WonderInventions/node-webrtc",
   "bugs": "https://github.com/WonderInventions/node-webrtc/issues",
@@ -26,7 +26,7 @@
   ],
   "dependencies": {},
   "optionalDependencies": {
-    "@roamhq/wrtc-win32-x64": "0.5.1",
+    "@roamhq/wrtc-win32-x64": "0.6.0",
     "@roamhq/wrtc-darwin-x64": "0.5.1",
     "@roamhq/wrtc-linux-x64": "0.5.1",
     "domexception": "^4.0.0"
