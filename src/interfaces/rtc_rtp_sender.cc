@@ -81,7 +81,7 @@ Napi::Value RTCRtpSender::GetCapabilities(const Napi::CallbackInfo& info) {
     auto factory = PeerConnectionFactory::GetOrCreateDefault();
     auto kind = kindString == "audio" ? cricket::MEDIA_TYPE_AUDIO : cricket::MEDIA_TYPE_VIDEO;
     auto capabilities = factory->factory()->GetRtpSenderCapabilities(kind);
-    factory->Release();
+    PeerConnectionFactory::Release();
     CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), capabilities, result, Napi::Value)
     return result;
   }
@@ -204,11 +204,14 @@ FROM_NAPI_IMPL(RTCRtpSender*, value) {
   return From<Napi::Object>(value).FlatMap<RTCRtpSender*>([](Napi::Object object) {
     auto isRTCRtpSender = false;
     napi_instanceof(object.Env(), object, RTCRtpSender::constructor().Value(), &isRTCRtpSender);
+
     if (object.Env().IsExceptionPending()) {
       return Validation<RTCRtpSender*>::Invalid(object.Env().GetAndClearPendingException().Message());
-    } else if (!isRTCRtpSender) {
+    }
+    if (!isRTCRtpSender) {
       return Validation<RTCRtpSender*>::Invalid("This is not an instance of RTCRtpSender");
     }
+
     return Pure(RTCRtpSender::Unwrap(object));
   });
 }

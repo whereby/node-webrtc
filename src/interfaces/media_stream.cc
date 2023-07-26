@@ -313,11 +313,14 @@ FROM_NAPI_IMPL(MediaStream*, value) {
   return From<Napi::Object>(value).FlatMap<MediaStream*>([](Napi::Object object) {
     auto isMediaStream = false;
     napi_instanceof(object.Env(), object, MediaStream::constructor().Value(), &isMediaStream);
+
     if (object.Env().IsExceptionPending()) {
       return Validation<MediaStream*>::Invalid(object.Env().GetAndClearPendingException().Message());
-    } else if (!isMediaStream) {
+    }
+    if (!isMediaStream) {
       return Validation<MediaStream*>::Invalid("This is not an instance of MediaStream");
     }
+
     return Pure(MediaStream::Unwrap(object));
   });
 }

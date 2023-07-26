@@ -17,7 +17,8 @@ namespace node_webrtc {
       napi_instanceof(object.Env(), object, IFACE::constructor().Value(), &isInstance); \
       if (object.Env().IsExceptionPending()) { \
         return Validation<IFACE*>::Invalid(object.Env().GetAndClearPendingException().Message()); \
-      } else if (!isInstance) { \
+      } \
+      if (!isInstance) { \
         return Validation<IFACE*>::Invalid("This is not an instance of " NAME); \
       } \
       return Pure(IFACE::Unwrap(object)); \

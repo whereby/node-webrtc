@@ -82,7 +82,12 @@ void RTCRtpTransceiver::SetDirection(const Napi::CallbackInfo& info, const Napi:
     Napi::TypeError::New(info.Env(), maybeDirection.ToErrors()[0]).ThrowAsJavaScriptException();
     return;
   }
-  _transceiver->SetDirection(maybeDirection.UnsafeFromValid());
+
+  auto err = _transceiver->SetDirectionWithError(maybeDirection.UnsafeFromValid());
+  if (!err.ok()) {
+    Napi::Error::New(info.Env(), err.message()).ThrowAsJavaScriptException();
+    return;
+  }
 }
 
 Napi::Value RTCRtpTransceiver::GetCurrentDirection(const Napi::CallbackInfo& info) {
@@ -91,7 +96,7 @@ Napi::Value RTCRtpTransceiver::GetCurrentDirection(const Napi::CallbackInfo& inf
 }
 
 Napi::Value RTCRtpTransceiver::Stop(const Napi::CallbackInfo& info) {
-  _transceiver->Stop();
+  _transceiver->StopStandard();
   return info.Env().Undefined();
 }
 
