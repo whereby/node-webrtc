@@ -90,11 +90,16 @@ RTCPeerConnection::RTCPeerConnection(const Napi::CallbackInfo& info)
       _port_range.min.FromMaybe(0),
       _port_range.max.FromMaybe(65535));
 
-  _jinglePeerConnection = _factory->factory()->CreatePeerConnection(
-          configuration.configuration,
-          std::move(portAllocator),
-          nullptr,
-          this);
+  auto deps = webrtc::PeerConnectionDependencies(this);
+  deps.allocator = std::move(portAllocator);
+  auto maybePeerConnection = _factory->factory()->CreatePeerConnectionOrError(configuration.configuration, std::move(deps));
+
+  if (!maybePeerConnection.ok()) {
+    Napi::Error::New(env, maybePeerConnection.MoveError().message()).ThrowAsJavaScriptException();
+    return;
+  }
+
+  _jinglePeerConnection = maybePeerConnection.MoveValue();
 }
 
 RTCPeerConnection::~RTCPeerConnection() {
@@ -290,10 +295,13 @@ Napi::Value RTCPeerConnection::AddTransceiver(const Napi::CallbackInfo& info) {
   if (!_jinglePeerConnection) {
     Napi::Error::New(env, "Cannot addTransceiver; RTCPeerConnection is closed").ThrowAsJavaScriptException();
     return env.Undefined();
-  } else if (_jinglePeerConnection->GetConfiguration().sdp_semantics != webrtc::SdpSemantics::kUnifiedPlan) {
+  }
+
+  if (_jinglePeerConnection->GetConfiguration().sdp_semantics != webrtc::SdpSemantics::kUnifiedPlan) {
     Napi::Error::New(env, "AddTransceiver is only available with Unified Plan SdpSemanticsAbort").ThrowAsJavaScriptException();
     return env.Undefined();
   }
+
   CONVERT_ARGS_OR_THROW_AND_RETURN_NAPI(info, args, std::tuple<Either<cricket::MediaType COMMA MediaStreamTrack*> COMMA Maybe<webrtc::RtpTransceiverInit>>)
   Either<cricket::MediaType, MediaStreamTrack*> kindOrTrack = std::get<0>(args);
   Maybe<webrtc::RtpTransceiverInit> maybeInit = std::get<1>(args);
@@ -351,7 +359,7 @@ Napi::Value RTCPeerConnection::CreateOffer(const Napi::CallbackInfo& info) {
     return deferred.Promise();
   }
 
-  auto observer = new rtc::RefCountedObject<CreateSessionDescriptionObserver>(this, deferred);
+  auto observer = rtc::make_ref_counted<CreateSessionDescriptionObserver>(this, deferred);
   _jinglePeerConnection->CreateOffer(observer, maybeOptions.UnsafeFromValid().options);
 
   return deferred.Promise();
@@ -471,16 +479,17 @@ Napi::Value RTCPeerConnection::CreateDataChannel(const Napi::CallbackInfo& info)
   auto label = std::get<0>(args);
   auto dataChannelInit = std::get<1>(args).FromMaybe(webrtc::DataChannelInit());
 
-  rtc::scoped_refptr<webrtc::DataChannelInterface> data_channel_interface =
-      _jinglePeerConnection->CreateDataChannel(label, &dataChannelInit);
-
-  if (!data_channel_interface) {
+  auto maybeDataChannel = _jinglePeerConnection->CreateDataChannelOrError(label, &dataChannelInit);
+  if (!maybeDataChannel.ok()) {
+    // TODO: add error message
     Napi::Error(env, ErrorFactory::CreateInvalidStateError(env, "'createDataChannel' failed")).ThrowAsJavaScriptException();
     return env.Undefined();
   }
+  auto dataChannel = maybeDataChannel.MoveValue();
 
-  auto observer = new DataChannelObserver(_factory, data_channel_interface);
-  auto channel = RTCDataChannel::wrap()->GetOrCreate(observer, observer->channel());
+  // This memory is freed in rtc_data_channel.cc, in the constructor.
+  auto observer = new DataChannelObserver(_factory, dataChannel);
+  auto channel = RTCDataChannel::wrap()->GetOrCreate(observer, observer->channel()); // NOLINT
   _channels.push_back(channel);
 
   return channel->Value();
@@ -548,7 +557,7 @@ Napi::Value RTCPeerConnection::GetStats(const Napi::CallbackInfo& info) {
 
   CONVERT_ARGS_OR_REJECT_AND_RETURN_NAPI(deferred, info, maybeSelector, Maybe<MediaStreamTrack*>);
 
-  auto callback = new rtc::RefCountedObject<RTCStatsCollector>(this, deferred);
+  auto callback = rtc::make_ref_counted<RTCStatsCollector>(this, deferred);
   if (maybeSelector.IsJust()) {
     auto selector = maybeSelector.UnsafeFromJust();
     auto track = selector->track();
