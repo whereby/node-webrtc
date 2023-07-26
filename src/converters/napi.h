@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <iosfwd>
+#include <map>
 #include <string>
 #include <vector>
 #include <utility>
@@ -148,6 +149,75 @@ struct Converter<std::pair<Napi::Env, std::vector<T>>, Napi::Value> {
       }
     }
     return Pure(scope.Escape(maybeArray));
+  }
+};
+
+template <typename T>
+struct Converter<Napi::Object, std::map<std::string, T>> {
+  using Result = Validation<std::map<std::string, T>>;
+  static Result Convert(const Napi::Object o) {
+    auto validated = std::map<std::string, T>();
+    auto propertyNames = o.GetPropertyNames();
+    if (propertyNames.Env().IsExceptionPending()) {
+      return Result::Invalid(propertyNames.Env().GetAndClearPendingException().Message());
+    }
+    for (uint32_t i = 0; i < propertyNames.Length(); i++) {
+      auto key = propertyNames.Get(i);
+      if (key.Env().IsExceptionPending()) {
+        return Result::Invalid(key.Env().GetAndClearPendingException().Message());
+      }
+      if (!o.HasOwnProperty(key)) {
+        continue;
+      }
+      auto maybeKey = From<std::string>(key);
+      if (maybeKey.IsInvalid()) {
+        return Result::Invalid(maybeKey.ToErrors());
+      }
+      auto value = o.Get(key);
+      if (value.Env().IsExceptionPending()) {
+        return Result::Invalid(value.Env().GetAndClearPendingException().Message());
+      }
+      auto maybeValue = From<T>(value);
+      if (maybeValue.IsInvalid()) {
+        return Result::Invalid(maybeValue.ToErrors());
+      }
+
+      validated[maybeKey.UnsafeFromValid()] = maybeValue.UnsafeFromValid();
+    }
+    return Pure(validated);
+  }
+};
+
+template <typename T>
+struct Converter<Napi::Value, std::map<std::string, T>> {
+  static Validation<std::map<std::string, T>> Convert(const Napi::Value value) {
+    return Converter<Napi::Value, Napi::Object>::Convert(value).FlatMap<std::map<std::string, T>>(Converter<Napi::Object, std::map<std::string, T>>::Convert);
+  }
+};
+
+template <typename T>
+struct Converter<std::pair<Napi::Env, std::map<std::string, T>>, Napi::Value> {
+  static Validation<Napi::Value> Convert(std::pair<Napi::Env, std::map<std::string, T>> pair) {
+    auto env = pair.first;
+    Napi::EscapableHandleScope scope(env);
+    auto values = pair.second;
+    auto maybeObject = Napi::Object::New(env);
+    if (maybeObject.Env().IsExceptionPending()) {
+      return Validation<Napi::Value>::Invalid(maybeObject.Env().GetAndClearPendingException().Message());
+    }
+    for (auto it = values.begin(); it != values.end(); ++it) {
+      auto key = it->first;
+      auto value = it->second;
+      auto maybeValue = From<Napi::Value>(std::make_pair(env, value));
+      if (maybeValue.IsInvalid()) {
+        return Validation<Napi::Value>::Invalid(maybeValue.ToErrors());
+      }
+      maybeObject.Set(key, maybeValue.UnsafeFromValid());
+      if (maybeObject.Env().IsExceptionPending()) {
+        return Validation<Napi::Value>::Invalid(maybeObject.Env().GetAndClearPendingException().Message());
+      }
+    }
+    return Pure(scope.Escape(maybeObject));
   }
 };
 
