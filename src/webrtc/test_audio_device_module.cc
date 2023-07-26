@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iosfwd>
+#include <src/rtc_base/platform_thread.h>
 #include <type_traits>
 #include <vector>
 
@@ -87,15 +88,14 @@ class TestAudioDeviceModuleImpl  // NOLINT
         rtc::CritScope cs(&lock_);
         stop_thread_ = true;
       }
-      thread_->Stop();
+      thread_->Finalize();
     }
   }
 
   int32_t Init() override {
-    thread_ = absl::make_unique<rtc::PlatformThread>(
-            TestAudioDeviceModuleImpl::Run, this, "TestAudioDeviceModuleImpl",
-            rtc::kHighPriority);
-    thread_->Start();
+    thread_ = absl::make_unique<rtc::PlatformThread>(rtc::PlatformThread::SpawnJoinable([this]() {
+        TestAudioDeviceModuleImpl::Run(this);
+      }, "TestAudioDeviceModuleImpl", rtc::ThreadAttributes { rtc::ThreadPriority::kHigh }));
     return 0;
   }
 
