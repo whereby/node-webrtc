@@ -51,7 +51,7 @@ RTCRtpReceiver::~RTCRtpReceiver() {
   _factory = nullptr;
 
   wrap()->Release(this);
-}  // NOLINT
+}
 
 Napi::Value RTCRtpReceiver::GetTrack(const Napi::CallbackInfo&) {
   return MediaStreamTrack::wrap()->GetOrCreate(_factory, _receiver->track())->Value();

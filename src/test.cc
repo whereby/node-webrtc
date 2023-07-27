@@ -18,7 +18,7 @@
 TEST_CASE("converting booleans", "[converting-booleans]") {
   auto env = *node_webrtc::Test::env;
 
-  SECTION("from JavaScript") {  // NOLINT
+  SECTION("from JavaScript") {
     SECTION("works for") {
       SECTION("true") {
         Napi::Value True = Napi::Boolean::New(env, true);

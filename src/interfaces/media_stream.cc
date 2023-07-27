@@ -71,7 +71,7 @@ MediaStream::Impl::~Impl() {
   Napi::HandleScope scope(PeerConnectionFactory::constructor().Env());
 
   if (_factory) {
-    _factory->Unref();  // NOLINT
+    _factory->Unref();
     _factory = nullptr;
   }
   if (_shouldReleaseFactory) {

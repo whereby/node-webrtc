@@ -84,7 +84,7 @@ RTCDtlsTransport::~RTCDtlsTransport() {
   Napi::HandleScope scope(PeerConnectionFactory::constructor().Env());
   _factory->Unref();
   _factory = nullptr;
-}  // NOLINT
+}
 
 void RTCDtlsTransport::Stop() {
   _transport->UnregisterObserver();

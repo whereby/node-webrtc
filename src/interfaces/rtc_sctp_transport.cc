@@ -41,7 +41,7 @@ RTCSctpTransport::RTCSctpTransport(const Napi::CallbackInfo& info)
   });
 
   if (_transport->Information().state() == webrtc::SctpTransportState::kClosed) {
-    Stop();  // NOLINT
+    Stop();
   }
 }
 
@@ -50,7 +50,7 @@ RTCSctpTransport::~RTCSctpTransport() {
   _factory->Unref();
   _factory = nullptr;
   wrap()->Release(this);
-}  // NOLINT
+}
 
 void RTCSctpTransport::Stop() {
   _transport->UnregisterObserver();

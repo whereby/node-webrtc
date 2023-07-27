@@ -55,7 +55,7 @@ MediaStreamTrack::~MediaStreamTrack() {
   _factory = nullptr;
 
   wrap()->Release(this);
-}  // NOLINT
+}
 
 void MediaStreamTrack::Stop() {
   _track->UnregisterObserver(this);

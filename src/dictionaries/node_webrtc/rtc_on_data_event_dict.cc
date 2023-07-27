@@ -29,7 +29,6 @@ static Validation<RTC_ON_DATA_EVENT_DICT> CreateRTCOnDataEventDict(
   }
 
   auto actualByteLength = samples.ByteLength();
-  // NOLINTNEXTLINE
   auto expectedByteLength = static_cast<size_t>(channelCount * numberOfFrames * bitsPerSample / 8);
   if (actualByteLength != expectedByteLength) {
     auto error = "Expected a .byteLength of " + std::to_string(expectedByteLength) + ", not " +
@@ -90,16 +89,17 @@ TO_NAPI_IMPL(RTC_ON_DATA_EVENT_DICT, pair) {
   Napi::Value maybeSamples;
   switch (dict.bitsPerSample) {
     case 8:
-      maybeSamples = Napi::Int8Array::New(env, length, maybeArrayBuffer, 0);  // NOLINT
+      maybeSamples = Napi::Int8Array::New(env, length, maybeArrayBuffer, 0);
       break;
     case 16:
-      maybeSamples = Napi::Int16Array::New(env, length, maybeArrayBuffer, 0);  // NOLINT
+      maybeSamples = Napi::Int16Array::New(env, length, maybeArrayBuffer, 0);
       break;
     case 32:
-      maybeSamples = Napi::Int32Array::New(env, length, maybeArrayBuffer, 0);  // NOLINT
+      maybeSamples = Napi::Int32Array::New(env, length, maybeArrayBuffer, 0);
       break;
     default:
-      maybeSamples = Napi::Uint8Array::New(env, length, maybeArrayBuffer, 0);  // NOLINT
+      maybeSamples = Napi::Uint8Array::New(env, length, maybeArrayBuffer, 0);
+      break;
   }
   if (maybeSamples.Env().IsExceptionPending()) {
     return Validation<Napi::Value>::Invalid(maybeSamples.Env().GetAndClearPendingException().Message());

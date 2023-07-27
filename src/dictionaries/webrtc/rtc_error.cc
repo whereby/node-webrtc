@@ -41,7 +41,6 @@ TO_NAPI_IMPL(const webrtc::RTCError*, pair) {
       return Pure(scope.Escape(ErrorFactory::CreateInvalidStateError(env, error->message())));
     case webrtc::RTCErrorType::UNSUPPORTED_OPERATION:
     case webrtc::RTCErrorType::RESOURCE_EXHAUSTED:
-      return Pure(scope.Escape(ErrorFactory::CreateOperationError(env, error->message())));
     // NOTE(mroberts): I believe this is supposed to include some additional data.
     case webrtc::RTCErrorType::OPERATION_ERROR_WITH_DATA:
       return Pure(scope.Escape(ErrorFactory::CreateOperationError(env, error->message())));

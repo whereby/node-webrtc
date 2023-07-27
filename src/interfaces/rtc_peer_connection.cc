@@ -437,7 +437,7 @@ Napi::Value RTCPeerConnection::SetRemoteDescription(const Napi::CallbackInfo& in
   auto observer = new rtc::RefCountedObject<SetSessionDescriptionObserver>(this, deferred);
   _jinglePeerConnection->SetRemoteDescription(observer, description.release());
 
-  return deferred.Promise();  // NOLINT
+  return deferred.Promise();
 }
 
 Napi::Value RTCPeerConnection::AddIceCandidate(const Napi::CallbackInfo& info) {
@@ -605,7 +605,7 @@ Napi::Value RTCPeerConnection::GetStats(const Napi::CallbackInfo& info) {
     _jinglePeerConnection->GetStats(callback);
   }
 
-  return deferred.Promise();  // NOLINT
+  return deferred.Promise();
 }
 
 Napi::Value RTCPeerConnection::LegacyGetStats(const Napi::CallbackInfo& info) {
