@@ -298,43 +298,6 @@ test('data channel connectivity', function(t) {
   });
 });
 
-test('getStats (legacy)', function(t) {
-  t.plan(2);
-
-  function getStats(peer, callback) {
-    peer.getStats(function(response) {
-      var reports = response.result();
-      callback(null, reports.map(function(report) {
-        var obj = {
-          timestamp: report.timestamp,
-          type: report.type
-        };
-        var names = report.names();
-        names.forEach(function(name) {
-          obj[name] = report.stat(name);
-        });
-        return obj;
-      }));
-    }, function(error) {
-      callback(error);
-    });
-  }
-
-  function done(error, reports) {
-    if (error) {
-      t.fail(error);
-      return;
-    }
-    // eslint-disable-next-line no-console
-    console.log(reports);
-    t.pass('successfully called getStats (legacy)');
-  }
-
-  peers.forEach(function(peer) {
-    getStats(peer, done);
-  });
-});
-
 test('getStats', function(t) {
   t.plan(2);
 
@@ -382,9 +345,13 @@ test('close the connections', function(t) {
       t.equal(error.code, 11);
       t.equal(error.name, 'InvalidStateError');
     }
-    peers[i].getStats(function() {}, function(err) {
-      t.ok(err);
-    });
+    peers[i].getStats().then(
+      () => {},
+      (err) => {
+        // We should throw an error for getStats() called on closed connections
+        t.ok(err);
+      }
+    );
     peers[i].close();
   }
 

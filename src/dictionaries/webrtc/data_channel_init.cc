@@ -32,7 +32,8 @@ static Validation<webrtc::DataChannelInit> DATA_CHANNEL_INIT_FN(
     const RTCPriorityType) {
   if (id.FromMaybe(0) > UINT16_MAX) {
     return Validation<webrtc::DataChannelInit>::Invalid("id must be between 0 and 65534, inclusive");
-  } else if (maxPacketLifeTime.IsJust() && maxRetransmits.IsJust()) {
+  }
+  if (maxPacketLifeTime.IsJust() && maxRetransmits.IsJust()) {
     return Validation<webrtc::DataChannelInit>::Invalid("You cannot set both maxPacketLifeTime and maxRetransmits");
   }
   webrtc::DataChannelInit init;

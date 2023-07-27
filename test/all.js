@@ -1,7 +1,6 @@
 'use strict';
 
-//require('child_process').spawnSync('pause', {shell: true, stdio: 'inherit'});
-
+// require('child_process').spawnSync('pause', {shell: true, stdio: 'inherit'});
 require('./addicecandidate');
 require('./closing-data-channel');
 require('./closing-peer-connection');

@@ -45,12 +45,12 @@ TO_NAPI_IMPL(webrtc::RtpCodecCapability, pair) {
 }
 
 static webrtc::RtpCodecCapability CreateRtpCodecCapability(
-    std::string mimeType,
+    std::string const& mimeType,
     uint64_t clockRate,
     Maybe<uint8_t> channels,
-    Maybe<std::string> maybeSdpFmtpLine) {
+    Maybe<std::string> const& maybeSdpFmtpLine) {
   webrtc::RtpCodecCapability result;
-  auto indexOfSlash = mimeType.find("/");
+  auto indexOfSlash = mimeType.find('/');
   auto kindString = mimeType.substr(0, indexOfSlash);
   auto nameString = mimeType.substr(indexOfSlash + 1);
   result.kind = kindString == "audio" ? cricket::MEDIA_TYPE_AUDIO : cricket::MEDIA_TYPE_VIDEO;
@@ -66,7 +66,7 @@ static webrtc::RtpCodecCapability CreateRtpCodecCapability(
     while ((pos = sdpFmtpLine.find(";")) != std::string::npos) {
       keyValue = sdpFmtpLine.substr(0, pos);
       sdpFmtpLine.erase(0, pos + 1);
-      auto indexOfEquals = keyValue.find("=");
+      auto indexOfEquals = keyValue.find('=');
       auto key = keyValue.substr(0, indexOfEquals);
       auto value = keyValue.substr(indexOfEquals + 1);
       result.parameters[key] = value;

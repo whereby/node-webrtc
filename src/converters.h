@@ -30,7 +30,7 @@ namespace node_webrtc {
 #define DECLARE_CONVERTER(I, O) \
   template <> \
   struct Converter<I, O> { \
-    static Validation<O> Convert(I); \
+    static Validation<O> Convert(I const&); \
   };
 
 /**
@@ -40,7 +40,7 @@ namespace node_webrtc {
  * @param O the output type
  * @param V the name of the input variable to convert
  */
-#define CONVERTER_IMPL(I, O, V) Validation<O> Converter<I, O>::Convert(I V)
+#define CONVERTER_IMPL(I, O, V) Validation<O> Converter<I, O>::Convert(I const& V)
 
 /**
  * This macro defines a node_webrtc::Converter from I to O when node_webrtc::Converter instances from
@@ -76,7 +76,7 @@ struct Converter {};
  * @return the target value
  */
 template <typename T, typename S>
-static Validation<T> From(const S s) {
+static Validation<T> From(S const& s) {
   return Converter<S, T>::Convert(s);
 }
 
@@ -86,7 +86,7 @@ static Validation<T> From(const S s) {
  */
 template <typename T>
 struct Converter<T, T> {
-  static Validation<T> Convert(const T t) {
+  static Validation<T> Convert(T const& t) {
     return Validation<T>(t);
   }
 };
@@ -99,7 +99,7 @@ struct Converter<T, T> {
  */
 template <typename S, typename L, typename R>
 struct Converter<S, Either<L, R>> {
-  static Validation<Either<L, R>> Convert(const S s) {
+  static Validation<Either<L, R>> Convert(S const& s) {
     return From<L>(s).Map(&MakeLeft<R, L>)
         | (From<R>(s).Map(&MakeRight<L, R>));
   }
@@ -107,7 +107,7 @@ struct Converter<S, Either<L, R>> {
 
 template <typename T>
 struct Converter<T*, std::shared_ptr<T>> {
-  static Validation<std::shared_ptr<T>> Convert(T* t) {
+  static Validation<std::shared_ptr<T>> Convert(T* const& t) {
     return Validation<std::shared_ptr<T>>(std::shared_ptr<T>(t));
   }
 };

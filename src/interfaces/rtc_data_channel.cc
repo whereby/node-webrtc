@@ -38,7 +38,7 @@ DataChannelObserver::~DataChannelObserver() {
   Napi::HandleScope scope(PeerConnectionFactory::constructor().Env());
   _factory->Unref();
   _factory = nullptr;
-}  // NOLINT
+}
 
 void DataChannelObserver::OnStateChange() {
   auto state = _jingleDataChannel->state();
@@ -96,7 +96,7 @@ RTCDataChannel::~RTCDataChannel() {
   _factory = nullptr;
 
   wrap()->Release(this);
-}  // NOLINT
+}
 
 void RTCDataChannel::CleanupInternals() {
   if (_jingleDataChannel == nullptr) {
@@ -164,9 +164,9 @@ void RTCDataChannel::HandleMessage(RTCDataChannel& channel, const webrtc::DataBu
     auto array = Napi::ArrayBuffer::New(env, message, size, [](Napi::Env, void* buffer) {
       delete[] static_cast<char*>(buffer);
     });
-    value = array;  // NOLINT
+    value = array;
   } else {
-    auto str = Napi::String::New(env, reinterpret_cast<const char*>(buffer.data.data()), size);  // NOLINT
+    auto str = Napi::String::New(env, reinterpret_cast<const char*>(buffer.data.data()), size);
     value = str;
   }
   auto object = Napi::Object::New(env);

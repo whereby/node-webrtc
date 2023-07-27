@@ -68,7 +68,7 @@ RTCIceTransport::~RTCIceTransport() {
   _factory->Unref();
   _factory = nullptr;
   wrap()->Release(this);
-}  // NOLINT
+}
 
 void RTCIceTransport::OnRTCDtlsTransportStopped() {
   std::lock_guard<std::mutex> lock(_mutex);

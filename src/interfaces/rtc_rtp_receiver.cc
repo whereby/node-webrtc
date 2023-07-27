@@ -51,7 +51,7 @@ RTCRtpReceiver::~RTCRtpReceiver() {
   _factory = nullptr;
 
   wrap()->Release(this);
-}  // NOLINT
+}
 
 Napi::Value RTCRtpReceiver::GetTrack(const Napi::CallbackInfo&) {
   return MediaStreamTrack::wrap()->GetOrCreate(_factory, _receiver->track())->Value();
@@ -74,7 +74,7 @@ Napi::Value RTCRtpReceiver::GetCapabilities(const Napi::CallbackInfo& info) {
     auto factory = PeerConnectionFactory::GetOrCreateDefault();
     auto kind = kindString == "audio" ? cricket::MEDIA_TYPE_AUDIO : cricket::MEDIA_TYPE_VIDEO;
     auto capabilities = factory->factory()->GetRtpReceiverCapabilities(kind);
-    factory->Release();
+    PeerConnectionFactory::Release();
     CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), capabilities, result, Napi::Value)
     return result;
   }
@@ -166,11 +166,14 @@ FROM_NAPI_IMPL(RTCRtpReceiver*, value) {
   return From<Napi::Object>(value).FlatMap<RTCRtpReceiver*>([](Napi::Object object) {
     auto isRTCRtpReceiver = false;
     napi_instanceof(object.Env(), object, RTCRtpReceiver::constructor().Value(), &isRTCRtpReceiver);
+
     if (object.Env().IsExceptionPending()) {
       return Validation<RTCRtpReceiver*>::Invalid(object.Env().GetAndClearPendingException().Message());
-    } else if (!isRTCRtpReceiver) {
+    }
+    if (!isRTCRtpReceiver) {
       return Validation<RTCRtpReceiver*>::Invalid("This is not an instance of RTCRtpReceiver");
     }
+
     return Pure(RTCRtpReceiver::Unwrap(object));
   });
 }

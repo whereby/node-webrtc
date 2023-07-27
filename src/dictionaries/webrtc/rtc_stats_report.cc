@@ -40,7 +40,7 @@ static Maybe<Errors> SetMap(Napi::Object map, Napi::Value key, Napi::Value value
 }
 
 template <typename T>
-static Maybe<Errors> DoSet(Napi::Object map, std::string key, T value) {
+static Maybe<Errors> DoSet(Napi::Object map, std::string const& key, T value) {
   auto env = map.Env();
   Napi::HandleScope scope(env);
   auto maybeKey = From<Napi::Value>(std::make_pair(env, key));

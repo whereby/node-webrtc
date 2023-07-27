@@ -10,7 +10,7 @@ TO_NAPI_IMPL(rtc::Buffer*, pair) {
   auto buffer = pair.second;
   auto size = buffer->size();
   auto data = new uint8_t[size];
-  memcpy(reinterpret_cast<void*>(data), reinterpret_cast<const void*>(buffer->data()), size);
+  memcpy(data, buffer->data(), size);
   auto maybeArrayBuffer = Napi::ArrayBuffer::New(env, data, size, [](Napi::Env, void* data) {
     delete[] static_cast<uint8_t*>(data);
   });

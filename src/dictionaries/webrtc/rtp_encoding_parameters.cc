@@ -31,7 +31,7 @@ namespace node_webrtc {
   DICT_OPTIONAL(double, scaleResolutionDownBy, "scaleResolutionDownBy")
 
 static Validation<webrtc::RtpEncodingParameters> RTP_ENCODING_PARAMETERS_FN(
-    const node_webrtc::Maybe<std::string> rid,
+    const node_webrtc::Maybe<std::string> & rid,
     const node_webrtc::Maybe<uint32_t> ssrc,
     const node_webrtc::Maybe<uint8_t> codecPayloadType,
     const node_webrtc::Maybe<node_webrtc::RTCDtxStatus> dtx,

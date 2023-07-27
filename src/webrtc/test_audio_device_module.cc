@@ -42,7 +42,7 @@ constexpr int kFramesPerSecond = rtc::kNumMicrosecsPerSec / kFrameLengthUs;
 
 // TestAudioDeviceModule implements an AudioDevice module that can act both as a
 // capturer and a renderer. It will use 10ms audio frames.
-class TestAudioDeviceModuleImpl  // NOLINT
+class TestAudioDeviceModuleImpl
   : public webrtc::webrtc_impl::AudioDeviceModuleDefault<TestAudioDeviceModule> {
  public:
   // Creates a new TestAudioDeviceModule. When capturing or playing, 10 ms audio
@@ -81,8 +81,8 @@ class TestAudioDeviceModuleImpl  // NOLINT
   }
 
   ~TestAudioDeviceModuleImpl() override {
-    StopPlayout();  // NOLINT
-    StopRecording();  // NOLINT
+    StopPlayout();
+    StopRecording();
     if (thread_) {
       {
         rtc::CritScope cs(&lock_);
@@ -228,7 +228,7 @@ class TestAudioDeviceModuleImpl  // NOLINT
         }
       } else {
         while (time_left_us > 1000) {
-          if (rtc::Thread::SleepMs(time_left_us / 1000)) {  // NOLINT
+          if (rtc::Thread::SleepMs(time_left_us / 1000)) {
             break;
           }
           time_left_us = time_us - rtc::TimeMicros();

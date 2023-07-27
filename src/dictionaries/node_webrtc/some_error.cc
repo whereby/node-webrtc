@@ -26,23 +26,19 @@ CONVERTER_IMPL(const webrtc::RTCError*, SomeError, error) {
     case webrtc::RTCErrorType::SYNTAX_ERROR:
       type = MakeRight<ErrorFactory::DOMExceptionName>(ErrorFactory::ErrorName::kSyntaxError);
       break;
-    case webrtc::RTCErrorType::INVALID_STATE:
-      type = MakeLeft<ErrorFactory::ErrorName>(ErrorFactory::DOMExceptionName::kInvalidStateError);
-      break;
     case webrtc::RTCErrorType::INVALID_MODIFICATION:
       type = MakeLeft<ErrorFactory::ErrorName>(ErrorFactory::DOMExceptionName::kInvalidModificationError);
       break;
     case webrtc::RTCErrorType::NETWORK_ERROR:
       type = MakeLeft<ErrorFactory::ErrorName>(ErrorFactory::DOMExceptionName::kNetworkError);
       break;
+    case webrtc::RTCErrorType::INVALID_STATE:
     // NOTE(mroberts): SetLocalDescription in the wrong state can throw this.
     case webrtc::RTCErrorType::INTERNAL_ERROR:
       type = MakeLeft<ErrorFactory::ErrorName>(ErrorFactory::DOMExceptionName::kInvalidStateError);
       break;
     case webrtc::RTCErrorType::UNSUPPORTED_OPERATION:
     case webrtc::RTCErrorType::RESOURCE_EXHAUSTED:
-      type = MakeLeft<ErrorFactory::ErrorName>(ErrorFactory::DOMExceptionName::kOperationError);
-      break;
     case webrtc::RTCErrorType::OPERATION_ERROR_WITH_DATA:
       type = MakeLeft<ErrorFactory::ErrorName>(ErrorFactory::DOMExceptionName::kOperationError);
       break;

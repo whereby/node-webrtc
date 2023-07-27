@@ -45,6 +45,13 @@ TO_NAPI_IMPL(const webrtc::RTCStatsMemberInterface*, pair) {
       return From<Napi::Value>(std::make_pair(env, *value->cast_to<webrtc::RTCStatsMember<std::vector<double>>>()));
     case webrtc::RTCStatsMemberInterface::Type::kSequenceString:  // std::vector<std::string>
       return From<Napi::Value>(std::make_pair(env, *value->cast_to<webrtc::RTCStatsMember<std::vector<std::string>>>()));
+
+    case webrtc::RTCStatsMemberInterface::Type::kMapStringUint64:
+      return From<Napi::Value>(std::make_pair(env, *value->cast_to<webrtc::RTCStatsMember<std::map<std::string, uint64_t>>>()));
+    case webrtc::RTCStatsMemberInterface::Type::kMapStringDouble:
+      return From<Napi::Value>(std::make_pair(env, *value->cast_to<webrtc::RTCStatsMember<std::map<std::string, double>>>()));
+    default:
+      return Validation<Napi::Value>::Invalid("RTCStatsMemberInterface type not supported, file a bug against node-webrtc");
   }
 }
 

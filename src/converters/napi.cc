@@ -100,7 +100,7 @@ FROM_NAPI_IMPL(uint64_t, value) {
     return Validation<uint64_t>::Invalid(maybeNumber.Env().GetAndClearPendingException().Message());
   }
   auto doubleValue = maybeNumber.DoubleValue();
-  if (doubleValue < 0 || doubleValue > UINT64_MAX) {
+  if (doubleValue < 0 || (uint64_t)doubleValue > UINT64_MAX) {
     return Validation<uint64_t>::Invalid("Expected a 64-bit unsigned integer");
   }
   return Pure(static_cast<uint64_t>(maybeNumber.DoubleValue()));
@@ -108,7 +108,7 @@ FROM_NAPI_IMPL(uint64_t, value) {
 
 TO_NAPI_IMPL(uint64_t, pair) {
   Napi::EscapableHandleScope scope(pair.first);
-  return Pure(scope.Escape(Napi::Number::New(pair.first, pair.second).As<Napi::Value>()));
+  return Pure(scope.Escape(Napi::Number::New(pair.first, static_cast<double>(pair.second)).As<Napi::Value>()));
 }
 
 FROM_NAPI_IMPL(int8_t, value) {
@@ -175,7 +175,7 @@ FROM_NAPI_IMPL(int64_t, value) {
     return Validation<int64_t>::Invalid(maybeNumber.Env().GetAndClearPendingException().Message());
   }
   auto doubleValue = maybeNumber.DoubleValue();
-  if (doubleValue < INT64_MIN || doubleValue > INT64_MAX) {
+  if ((int64_t)doubleValue < INT64_MIN || (int64_t)doubleValue > INT64_MAX) {
     return Validation<int64_t>::Invalid("Expected a 64-bit integer");
   }
   return Pure(maybeNumber.Int64Value());
@@ -183,7 +183,7 @@ FROM_NAPI_IMPL(int64_t, value) {
 
 TO_NAPI_IMPL(int64_t, pair) {
   Napi::EscapableHandleScope scope(pair.first);
-  return Pure(scope.Escape(Napi::Number::New(pair.first, pair.second).As<Napi::Value>()));
+  return Pure(scope.Escape(Napi::Number::New(pair.first, static_cast<double>(pair.second)).As<Napi::Value>()));
 }
 
 FROM_NAPI_IMPL(std::string, value) {
