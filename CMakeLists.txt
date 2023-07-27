@@ -47,6 +47,8 @@ add_dependencies(libc++ libwebrtc)
 set(libc++_objects
   algorithm.o
   any.o
+  atomic.o
+  barrier.o
   bind.o
   charconv.o
   chrono.o
@@ -57,6 +59,7 @@ set(libc++_objects
   functional.o
   future.o
   hash.o
+  ios.instantiations.o
   ios.o
   iostream.o
   locale.o
@@ -66,6 +69,7 @@ set(libc++_objects
   new.o
   optional.o
   random.o
+  random_shuffle.o
   regex.o
   shared_mutex.o
   stdexcept.o
@@ -106,7 +110,6 @@ set(libc++abi_objects
   cxa_guard.o
   cxa_handlers.o
   cxa_personality.o
-  cxa_unexpected.o
   cxa_vector.o
   cxa_virtual.o
   fallback_malloc.o
