@@ -35,11 +35,11 @@ TO_NAPI_IMPL(webrtc::RtpParameters, pair) {
 }
 
 static webrtc::RtpParameters NapiToRtpParameters(
-    std::string transactionId,
-    std::vector<webrtc::RtpHeaderExtensionParameters> headerExtensions,
-    webrtc::RtcpParameters rtcp,
-    std::vector<webrtc::RtpCodecParameters> codecs,
-    std::vector<webrtc::RtpEncodingParameters> encodings,
+    std::string const& transactionId,
+    std::vector<webrtc::RtpHeaderExtensionParameters> const& headerExtensions,
+    webrtc::RtcpParameters const& rtcp,
+    std::vector<webrtc::RtpCodecParameters> const& codecs,
+    std::vector<webrtc::RtpEncodingParameters> const& encodings,
     webrtc::DegradationPreference degradationPreference) {
   webrtc::RtpParameters parameters;
   parameters.transaction_id = transactionId;

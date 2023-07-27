@@ -1,3 +1,5 @@
+// Needed for std::getenv on Windows
+#define _CRT_SECURE_NO_WARNINGS // NOLINT(bugprone-reserved-identifier)
 #include "src/dictionaries/webrtc/rtc_configuration.h"
 
 #include "src/converters.h"
