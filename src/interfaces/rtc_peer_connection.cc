@@ -44,7 +44,6 @@
 #include "src/interfaces/rtc_peer_connection/peer_connection_factory.h"
 #include "src/interfaces/rtc_peer_connection/rtc_stats_collector.h"
 #include "src/interfaces/rtc_peer_connection/set_session_description_observer.h"
-#include "src/interfaces/rtc_peer_connection/stats_observer.h"
 #include "src/interfaces/rtc_rtp_receiver.h"
 #include "src/interfaces/rtc_rtp_sender.h"
 #include "src/interfaces/rtc_rtp_transceiver.h"
@@ -608,26 +607,6 @@ Napi::Value RTCPeerConnection::GetStats(const Napi::CallbackInfo& info) {
   return deferred.Promise();
 }
 
-Napi::Value RTCPeerConnection::LegacyGetStats(const Napi::CallbackInfo& info) {
-  auto env = info.Env();
-
-  CREATE_DEFERRED(env, deferred)
-
-  if (!_jinglePeerConnection) {
-    Reject(deferred, Napi::Error::New(env, "RTCPeerConnection is closed"));
-    return deferred.Promise();
-  }
-
-  auto statsObserver = new rtc::RefCountedObject<StatsObserver>(this, deferred);
-  if (!_jinglePeerConnection->GetStats(statsObserver, nullptr,
-          webrtc::PeerConnectionInterface::kStatsOutputLevelStandard)) {
-    Reject(deferred, Napi::Error::New(env, "Failed to execute getStats"));
-    return deferred.Promise();
-  }
-
-  return deferred.Promise();
-}
-
 Napi::Value RTCPeerConnection::GetTransceivers(const Napi::CallbackInfo& info) {
   std::vector<RTCRtpTransceiver*> transceivers;
   if (_jinglePeerConnection
@@ -807,7 +786,6 @@ void RTCPeerConnection::Init(Napi::Env env, Napi::Object exports) {
     InstanceMethod("getReceivers", &RTCPeerConnection::GetReceivers),
     InstanceMethod("getSenders", &RTCPeerConnection::GetSenders),
     InstanceMethod("getStats", &RTCPeerConnection::GetStats),
-    InstanceMethod("legacyGetStats", &RTCPeerConnection::LegacyGetStats),
     InstanceMethod("getTransceivers", &RTCPeerConnection::GetTransceivers),
     InstanceMethod("updateIce", &RTCPeerConnection::UpdateIce),
     InstanceMethod("addIceCandidate", &RTCPeerConnection::AddIceCandidate),
