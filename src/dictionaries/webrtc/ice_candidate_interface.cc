@@ -30,7 +30,7 @@ static Validation<webrtc::IceCandidateInterface*> ICE_CANDIDATE_INTERFACE_FN(
     const int sdpMLineIndex,
     const Maybe<std::string>&) {
   webrtc::SdpParseError error;
-  auto candidate_ = webrtc::CreateIceCandidate(sdpMid, sdpMLineIndex, candidate, &error);
+  auto candidate_ = webrtc::CreateIceCandidate(sdpMid, sdpMLineIndex, candidate, &error); // NOLINT(readability-suspicious-call-argument)
   if (!candidate_) {
     return Validation<webrtc::IceCandidateInterface*>::Invalid(error.description);
   }
@@ -43,7 +43,7 @@ FROM_NAPI_IMPL(std::shared_ptr<webrtc::IceCandidateInterface>, napi_value) {
   });
 }
 
-TO_NAPI_IMPL(webrtc::IceCandidateInterface*, pair) {
+TO_NAPI_IMPL(webrtc::IceCandidateInterface*, pair) { // NOLINT(readability-function-cognitive-complexity)
   auto env = pair.first;
   Napi::EscapableHandleScope scope(env);
 
@@ -62,13 +62,13 @@ TO_NAPI_IMPL(webrtc::IceCandidateInterface*, pair) {
 
   const auto& candidate_type = candidate.type();
   auto type = RTCIceCandidateType::kHost;
-  if (candidate_type == cricket::LOCAL_PORT_TYPE) {
+  if (candidate_type == (const char*)cricket::LOCAL_PORT_TYPE) {
     type = RTCIceCandidateType::kHost;
-  } else if (candidate_type == cricket::STUN_PORT_TYPE) {
+  } else if (candidate_type == (const char*)cricket::STUN_PORT_TYPE) {
     type = RTCIceCandidateType::kSrflx;
-  } else if (candidate_type == cricket::RELAY_PORT_TYPE) {
+  } else if (candidate_type == (const char*)cricket::RELAY_PORT_TYPE) {
     type = RTCIceCandidateType::kRelay;
-  } else if (candidate_type == cricket::PRFLX_PORT_TYPE) {
+  } else if (candidate_type == (const char*)cricket::PRFLX_PORT_TYPE) {
     type = RTCIceCandidateType::kPrflx;
   }
 

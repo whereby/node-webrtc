@@ -15,7 +15,7 @@
 
 #include <functional>
 
-namespace _dtl {
+namespace _dtl { // NOLINT(bugprone-reserved-identifier)
 
 template <typename FUNCTION>
 struct _curry;
@@ -25,7 +25,7 @@ template <typename R, typename T>
 struct _curry<std::function<R(T)>> {
   using type = std::function<R(T)>;
 
-  const type result;
+  const type result; // NOLINT(misc-non-private-member-variables-in-classes)
 
   explicit _curry(type fun): result(fun) {}
 };
@@ -37,7 +37,7 @@ _curry<std::function<R(T, Ts...)>> {
 
   using type = std::function<remaining_type(T)>;
 
-  const type result;
+  const type result; // NOLINT(misc-non-private-member-variables-in-classes)
 
   explicit _curry(const std::function<R(T, Ts...)>& fun): result(
         [ = ](const T & t) {

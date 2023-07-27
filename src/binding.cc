@@ -5,8 +5,8 @@
  * project authors may be found in the AUTHORS file in the root of the source
  * tree.
  */
+#include <cassert>
 #include <node-addon-api/napi.h>
-#include <assert.h>
 #include <uv.h>
 
 #include "src/interfaces/legacy_rtc_stats_report.h"

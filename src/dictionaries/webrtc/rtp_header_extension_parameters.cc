@@ -25,7 +25,7 @@ TO_NAPI_IMPL(webrtc::RtpHeaderExtensionParameters, pair) {
 }
 
 static webrtc::RtpHeaderExtensionParameters NapiToRtpHeaderExtensionParameters(
-    std::string uri,
+    std::string const& uri,
     int id,
     bool encrypted) {
   webrtc::RtpHeaderExtensionParameters parameters;

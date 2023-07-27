@@ -86,19 +86,21 @@ TO_NAPI_IMPL(RTC_ON_DATA_EVENT_DICT, pair) {
     return Validation<Napi::Value>::Invalid(maybeArrayBuffer.Env().GetAndClearPendingException().Message());
   }
 
+  // Slicing concerns can be ignored since Napi::Value stores enough type
+  // information to reconstruct them.
   Napi::Value maybeSamples;
   switch (dict.bitsPerSample) {
     case 8:
-      maybeSamples = Napi::Int8Array::New(env, length, maybeArrayBuffer, 0);
+      maybeSamples = Napi::Int8Array::New(env, length, maybeArrayBuffer, 0); // NOLINT(cppcoreguidelines-slicing)
       break;
     case 16:
-      maybeSamples = Napi::Int16Array::New(env, length, maybeArrayBuffer, 0);
+      maybeSamples = Napi::Int16Array::New(env, length, maybeArrayBuffer, 0); // NOLINT(cppcoreguidelines-slicing)
       break;
     case 32:
-      maybeSamples = Napi::Int32Array::New(env, length, maybeArrayBuffer, 0);
+      maybeSamples = Napi::Int32Array::New(env, length, maybeArrayBuffer, 0); // NOLINT(cppcoreguidelines-slicing)
       break;
     default:
-      maybeSamples = Napi::Uint8Array::New(env, length, maybeArrayBuffer, 0);
+      maybeSamples = Napi::Uint8Array::New(env, length, maybeArrayBuffer, 0); // NOLINT(cppcoreguidelines-slicing)
       break;
   }
   if (maybeSamples.Env().IsExceptionPending()) {

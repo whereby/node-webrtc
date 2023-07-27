@@ -28,7 +28,7 @@ TO_NAPI_IMPL(webrtc::RtcpParameters, pair) {
 }
 
 static webrtc::RtcpParameters NapiToRtcpParameters(
-    std::string cname,
+    std::string const& cname,
     bool reducedSize) {
   webrtc::RtcpParameters parameters;
   parameters.cname = cname;
