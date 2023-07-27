@@ -11,7 +11,7 @@ require('./get-configuration');
 require('./get-settings');
 require('./i420helpers');
 require('./iceservers');
-// require('./mediastream'); // hangs
+require('./mediastream');
 require('./multiconnect');
 require('./pass-interface-to-method');
 require('./rollback');
@@ -19,10 +19,10 @@ require('./rtcaudiosink');
 require('./rtcaudiosource');
 require('./rtcdtlstransport');
 require('./rtcdatachannel');
-// require('./rtcrtpreceiver'); // hangs
-// require('./rtcrtpsender'); // hangs
+require('./rtcrtpreceiver');
+require('./rtcrtpsender');
 require('./rtcvideosink');
-// require('./rtcvideosource'); // hangs, is that in my code?
+require('./rtcvideosource');
 require('./send-arraybuffer');
 require('./sessiondesc');
 

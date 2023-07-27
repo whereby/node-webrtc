@@ -8,6 +8,7 @@
 #include "src/interfaces/media_stream_track.h"
 
 #include <node-addon-api/napi.h>
+#include <webrtc/api/media_stream_interface.h>
 #include <webrtc/api/peer_connection_interface.h>
 #include <webrtc/rtc_base/helpers.h>
 
@@ -58,7 +59,22 @@ MediaStreamTrack::~MediaStreamTrack() {
 }
 
 void MediaStreamTrack::Stop() {
-  _track->UnregisterObserver(this);
+  // SAFETY: `[=]` is a capture-by-copy, which will create a new reference to
+  // the _track shared_ptr, so using that _track will be ok even if the current
+  // object is destructed.
+  // `this`'s pointer value needs to get copied for the `UnregisterObserver` to
+  // work properly, but we actually don't care about use-after-free, since we
+  // know when this is called the state should not be updating any more, and
+  // we only need to remove it from the track's list.
+  // This whole thing needs to be done because in M94, the `OnChanged()` method
+  // becomes called from the worker thread, but UnregisterObserver wants to be
+  // called on the signalling thread, and if they both do that at the same time,
+  // there is a deadlock :)
+  auto thisCopy = static_cast<webrtc::ObserverInterface*>(this);
+  rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> trackCopy = _track;
+  _factory->_signalingThread->PostTask(RTC_FROM_HERE, [=]() { // NOLINT
+    trackCopy->UnregisterObserver(thisCopy);
+  });
   _ended = true;
   _enabled = _track->enabled();
   AsyncObjectWrapWithLoop<MediaStreamTrack>::Stop();

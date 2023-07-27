@@ -18,7 +18,7 @@ ExternalProject_Add(
   project_depot_tools
 
   GIT_REPOSITORY    https://chromium.googlesource.com/chromium/tools/depot_tools.git
-  GIT_TAG           631522ca84713b20523c7e95d99f70f0c38a6d5c
+  GIT_TAG           4e005d51f061d66070a1c0c6651cb33aa4459d75
 
   PREFIX            ${CMAKE_BINARY_DIR}/external/depot_tools/prefix
   TMP_DIR           ${CMAKE_BINARY_DIR}/external/depot_tools/tmp
