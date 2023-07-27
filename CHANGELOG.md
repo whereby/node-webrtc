@@ -1,3 +1,17 @@
+0.7.0
+=====
+
+New Features
+------------
+
+- Update to libwebrtc M94! This brings some quality improvements over M87's
+  encoders and other network capabilities.
+
+Breaking Changes
+----------------
+
+- Remove `legacyGetStats` API from `RTCPeerConnection`.
+
 0.6.0
 =====
 
