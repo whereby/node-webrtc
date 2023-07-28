@@ -34,7 +34,7 @@ Napi::FunctionReference& RTCDtlsTransport::constructor() {
   return constructor;
 }
 
-static std::vector<rtc::Buffer> copy_certs(webrtc::DtlsTransportInformation information) {
+static std::vector<rtc::Buffer> copy_certs(webrtc::DtlsTransportInformation const& information) {
   auto certs = information.remote_ssl_certificates();
   if (certs) {
     auto size = certs->GetSize();
@@ -48,7 +48,8 @@ static std::vector<rtc::Buffer> copy_certs(webrtc::DtlsTransportInformation info
     }
     return ders;
   }
-  return std::vector<rtc::Buffer>();
+
+  return {};
 }
 
 RTCDtlsTransport::RTCDtlsTransport(const Napi::CallbackInfo& info)
@@ -148,9 +149,8 @@ Napi::Value RTCDtlsTransport::GetRemoteCertificates(const Napi::CallbackInfo& in
   std::lock_guard<std::mutex> lock(_mutex);
   auto certs = std::vector<rtc::Buffer*>();
   certs.reserve(_certs.size());
-  for (unsigned long i = 0; i < _certs.size(); i++) {
-    auto cert = &_certs[i];
-    certs.emplace_back(cert);
+  for (auto & cert : _certs) {
+    certs.push_back(&cert);
   }
   CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), certs, result, Napi::Value)
   return result;

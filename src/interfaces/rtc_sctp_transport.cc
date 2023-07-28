@@ -41,7 +41,9 @@ RTCSctpTransport::RTCSctpTransport(const Napi::CallbackInfo& info)
   });
 
   if (_transport->Information().state() == webrtc::SctpTransportState::kClosed) {
-    Stop();
+    // TODO(jack): figure out a way to not call this virtual method during
+    // construction
+    Stop(); // NOLINT
   }
 }
 

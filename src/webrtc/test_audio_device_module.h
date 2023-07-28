@@ -19,6 +19,7 @@
 #include <webrtc/modules/audio_device/include/audio_device.h>
 #include <webrtc/rtc_base/buffer.h>
 #include <webrtc/rtc_base/event.h>
+#include <webrtc/rtc_base/ref_counted_object.h>
 
 namespace webrtc { class AudioTransport; }
 
@@ -26,7 +27,7 @@ namespace node_webrtc {
 
 // TestAudioDeviceModule implements an AudioDevice module that can act both as a
 // capturer and a renderer. It will use 10ms audio frames.
-class TestAudioDeviceModule : public webrtc::AudioDeviceModule {
+class TestAudioDeviceModule : public rtc::RefCountedObject<webrtc::AudioDeviceModule> {
  public:
   // Returns the number of samples that Capturers and Renderers with this
   // sampling frequency will work with every time Capture or Render is called.
@@ -102,17 +103,17 @@ class TestAudioDeviceModule : public webrtc::AudioDeviceModule {
   // Returns a Capturer instance that gets its data from a file. The sample rate
   // and channels will be checked against the Wav file.
   static std::unique_ptr<Capturer> CreateWavFileReader(
-      std::string filename,
+      std::string const& filename,
       int sampling_frequency_in_hz,
       int num_channels = 1);
 
   // Returns a Capturer instance that gets its data from a file.
   // Automatically detects sample rate and num of channels.
-  static std::unique_ptr<Capturer> CreateWavFileReader(std::string filename);
+  static std::unique_ptr<Capturer> CreateWavFileReader(std::string const& filename);
 
   // Returns a Renderer instance that writes its data to a file.
   static std::unique_ptr<Renderer> CreateWavFileWriter(
-      std::string filename,
+      std::string const& filename,
       int sampling_frequency_in_hz,
       int num_channels = 1);
 
@@ -120,7 +121,7 @@ class TestAudioDeviceModule : public webrtc::AudioDeviceModule {
   // off silence at the beginning (not necessarily perfect silence, see
   // kAmplitudeThreshold) and at the end (only actual 0 samples in this case).
   static std::unique_ptr<Renderer> CreateBoundedWavFileWriter(
-      std::string filename,
+      std::string const& filename,
       int sampling_frequency_in_hz,
       int num_channels = 1);
 

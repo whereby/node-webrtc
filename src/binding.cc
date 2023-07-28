@@ -67,6 +67,7 @@ static Napi::Object Init(Napi::Env env, Napi::Object exports) {
     dispose(nullptr);
   }, nullptr);
   assert(status == napi_ok);
+  (void)status; // Ignore unused variable warning in release builds
 
   return exports;
 }

@@ -160,13 +160,15 @@ void RTCDataChannel::HandleMessage(RTCDataChannel& channel, const webrtc::DataBu
   Napi::Value value;
   if (binary) {
     char* message = new char[size];
-    memcpy(reinterpret_cast<void*>(message), reinterpret_cast<const void*>(buffer.data.data()), size);
+    memcpy(message, buffer.data.data(), size);
     auto array = Napi::ArrayBuffer::New(env, message, size, [](Napi::Env, void* buffer) {
       delete[] static_cast<char*>(buffer);
     });
     value = array;
   } else {
-    auto str = Napi::String::New(env, reinterpret_cast<const char*>(buffer.data.data()), size);
+    // This reinterpret_cast correct: if the message is not binary, it should
+    // be a valid UTF-8 string.
+    auto str = Napi::String::New(env, reinterpret_cast<const char*>(buffer.data.data()), size); // NOLINT
     value = str;
   }
   auto object = Napi::Object::New(env);
@@ -339,7 +341,9 @@ node_webrtc::DataChannelObserver*
 
 RTCDataChannel* RTCDataChannel::Create(
     node_webrtc::DataChannelObserver* observer,
-    rtc::scoped_refptr<webrtc::DataChannelInterface>) {
+    // TODO(jack): see if this is actually needed to keep the ref alive for
+    // long enough, or if it can be deleted.
+    rtc::scoped_refptr<webrtc::DataChannelInterface>) { // NOLINT
   auto env = constructor().Env();
   Napi::HandleScope scope(env);
 

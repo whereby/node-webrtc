@@ -160,13 +160,13 @@ Napi::Value RTCIceTransport::GetState(const Napi::CallbackInfo& info) {
 
 Napi::Value RTCIceTransport::GetGatheringState(const Napi::CallbackInfo& info) {
   std::lock_guard<std::mutex> lock(_mutex);
-  webrtc::PeerConnectionInterface::IceGatheringState state;
+  webrtc::PeerConnectionInterface::IceGatheringState state = {};
   switch (_gathering_state) {
     case cricket::IceGatheringState::kIceGatheringNew:
-      state = webrtc::PeerConnectionInterface::IceGatheringState::kIceGatheringComplete;
+      state = webrtc::PeerConnectionInterface::IceGatheringState::kIceGatheringNew;
       break;
     case cricket::IceGatheringState::kIceGatheringGathering:
-      state = webrtc::PeerConnectionInterface::IceGatheringState::kIceGatheringComplete;
+      state = webrtc::PeerConnectionInterface::IceGatheringState::kIceGatheringGathering;
       break;
     case cricket::IceGatheringState::kIceGatheringComplete:
       state = webrtc::PeerConnectionInterface::IceGatheringState::kIceGatheringComplete;

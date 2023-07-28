@@ -55,9 +55,11 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
 
   bool result = _workerThread->SetName("PeerConnectionFactory:workerThread", nullptr);
   assert(result);
+  (void)result;
 
   result = _workerThread->Start();
   assert(result);
+  (void)result;
 
   _audioDeviceModule = _workerThread->Invoke<rtc::scoped_refptr<webrtc::AudioDeviceModule>>(RTC_FROM_HERE, [audioLayer]() {
     return audioLayer.Map([](auto audioLayer) {
@@ -77,9 +79,11 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo& info)
 
   result = _signalingThread->SetName("PeerConnectionFactory:signalingThread", nullptr);
   assert(result);
+  (void)result;
 
   result = _signalingThread->Start();
   assert(result);
+  (void)result;
 
   _factory = webrtc::CreatePeerConnectionFactory(
           _workerThread.get(),
@@ -157,6 +161,7 @@ void PeerConnectionFactory::Dispose() {
 void PeerConnectionFactory::Init(Napi::Env env, Napi::Object exports) {
   bool result = rtc::InitializeSSL();
   assert(result);
+  (void)result;
 
   auto func = DefineClass(env, "RTCPeerConnectionFactory", {});
 

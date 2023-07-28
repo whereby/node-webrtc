@@ -70,7 +70,7 @@ Napi::Value RTCVideoSource::OnFrame(const Napi::CallbackInfo& info) {
 
   webrtc::VideoFrame::Builder builder;
   auto frame = builder
-      .set_timestamp_us(nowInUs)
+      .set_timestamp_us(static_cast<int64_t>(nowInUs))
       .set_video_frame_buffer(buffer)
       .build();
   _source->PushFrame(frame);

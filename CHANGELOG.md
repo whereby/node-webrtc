@@ -12,6 +12,11 @@ Breaking Changes
 
 - Remove `legacyGetStats` API from `RTCPeerConnection`.
 
+Bug Fixes
+---------
+
+- `RTCIceTransport.getGatheringState()` no longer always returns `"complete"`.
+
 0.6.0
 =====
 

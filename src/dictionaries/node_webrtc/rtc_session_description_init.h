@@ -30,6 +30,7 @@ static inline RTC_SESSION_DESCRIPTION_INIT CreateRTCSessionDescriptionInit(
 }
 
 DECLARE_CONVERTER(RTCSessionDescriptionInit, webrtc::SessionDescriptionInterface*)
+DECLARE_CONVERTER(webrtc::SessionDescriptionInterface*, RTCSessionDescriptionInit)
 DECLARE_CONVERTER(const webrtc::SessionDescriptionInterface*, RTCSessionDescriptionInit)
 
 DECLARE_FROM_NAPI(webrtc::SessionDescriptionInterface*)

@@ -24,7 +24,7 @@ Napi::FunctionReference& RTCAudioSource::constructor() {
 
 RTCAudioSource::RTCAudioSource(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<RTCAudioSource>(info) {
-  _source = new rtc::RefCountedObject<RTCAudioTrackSource>();
+  _source = rtc::make_ref_counted<RTCAudioTrackSource>();
 }
 
 Napi::Value RTCAudioSource::CreateTrack(const Napi::CallbackInfo&) {

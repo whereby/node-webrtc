@@ -433,7 +433,7 @@ Napi::Value RTCPeerConnection::SetRemoteDescription(const Napi::CallbackInfo& in
     return deferred.Promise();
   }
 
-  auto observer = new rtc::RefCountedObject<SetSessionDescriptionObserver>(this, deferred);
+  auto observer = rtc::make_ref_counted<SetSessionDescriptionObserver>(this, deferred);
   _jinglePeerConnection->SetRemoteDescription(observer, description.release());
 
   return deferred.Promise();

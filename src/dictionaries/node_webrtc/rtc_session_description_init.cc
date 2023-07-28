@@ -52,6 +52,10 @@ CONVERTER_IMPL(RTCSessionDescriptionInit, webrtc::SessionDescriptionInterface*, 
   return Pure(description);
 }
 
+CONVERTER_IMPL(webrtc::SessionDescriptionInterface*, RTCSessionDescriptionInit, description) {
+  return Converter<const webrtc::SessionDescriptionInterface*, RTCSessionDescriptionInit>::Convert(description);
+}
+
 CONVERTER_IMPL(const webrtc::SessionDescriptionInterface*, RTCSessionDescriptionInit, description) {
   if (!description) {
     return Validation<RTCSessionDescriptionInit>::Invalid("RTCSessionDescription is null");
