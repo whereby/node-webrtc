@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.15)
 cmake_policy(SET CMP0091 NEW)
 cmake_policy(SET CMP0042 NEW)
 
+if (APPLE AND "$ENV{TARGET_ARCH}" STREQUAL "arm64")
+  set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "" FORCE)
+endif()
+
 set(MODULE wrtc)
 project(${MODULE})
 
@@ -159,19 +163,13 @@ endif()
 
 if ("$ENV{TARGET_ARCH}" STREQUAL "arm")
   list(APPEND GN_GEN_ARGS
-    target_os="linux"
     target_cpu="arm"
     rtc_build_tools=true
-    treat_warnings_as_errors=false
-    fatal_linker_warnings=false
   )
 elseif ("$ENV{TARGET_ARCH}" STREQUAL "arm64")
   list(APPEND GN_GEN_ARGS
-    target_os="linux"
     target_cpu="arm64"
     rtc_build_tools=true
-    treat_warnings_as_errors=false
-    fatal_linker_warnings=false
   )
 else()
   list(APPEND GN_GEN_ARGS
@@ -179,9 +177,6 @@ else()
   )
 endif()
 
-# if (WIN32)
-#   list(APPEND GN_GEN_ARGS is_clang=false)
-# endif()
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   list(APPEND GN_GEN_ARGS is_debug=true)
 else()
@@ -355,7 +350,9 @@ target_compile_definitions(${MODULE} PRIVATE
 )
 
 if(WIN32)
-  set_property(TARGET ${MODULE} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  set_property(TARGET ${MODULE}
+    PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+  )
 
   target_link_libraries(${MODULE} PRIVATE
     dmoguids.lib
@@ -367,12 +364,12 @@ if(WIN32)
   )
 
   target_compile_definitions(${MODULE} PRIVATE
-    "$<$<CONFIG:Debug>:-D_HAS_ITERATOR_DEBUGGING=0>"
     -D_WINSOCKAPI_
     -DINCL_EXTRA_HTON_FUNCTIONS
     -DNOGDI
     -DNOMINMAX
     -DWEBRTC_WIN
+    "$<$<CONFIG:Debug>:-D_HAS_ITERATOR_DEBUGGING=0>"
   )
 else()
   target_link_libraries(${MODULE} PRIVATE
@@ -426,7 +423,7 @@ else()
     )
   endif()
 
-  if(APPLE)
+  if (APPLE)
     target_link_libraries(${MODULE} PRIVATE
       "-framework AppKit"
       "-framework AVFoundation"

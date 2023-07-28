@@ -7,13 +7,21 @@ const { spawnSync } = require('child_process');
 const args = ['configure'];
 
 if (process.env.DEBUG) {
-  args.push('--debug');
-  args.push('--CDCMAKE_EXPORT_COMPILE_COMMANDS=1');
+  args.push(...[
+    '--debug',
+    '--CDCMAKE_EXPORT_COMPILE_COMMANDS=1',
+  ]);
 }
 
 if (process.platform === 'win32') {
-  args.push('-G');
-  args.push('Ninja');
+  args.push(...[
+    '-G',
+    'Ninja',
+  ]);
+}
+
+if (process.env.TARGET_ARCH) {
+  args.push(`--CDCMAKE_TOOLCHAIN_FILE=toolchains/${process.platform}-${process.env.TARGET_ARCH}.toolchain`);
 }
 
 function main() {

@@ -1,8 +1,8 @@
 {
   "name": "@roamhq/wrtc-win32-x64",
   "version": "0.7.0",
-  "description": "The Windows 64-bit binary for wrtc.",
-  "repository": "https://github.com/WonderInventions/wrtc",
+  "description": "The Windows 64-bit binary for @roamhq/wrtc.",
+  "repository": "https://github.com/WonderInventions/node-webrtc",
   "license": "BSD-2-Clause",
   "os": [
     "win32"
