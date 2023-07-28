@@ -149,7 +149,7 @@ Napi::Value RTCDtlsTransport::GetRemoteCertificates(const Napi::CallbackInfo& in
   std::lock_guard<std::mutex> lock(_mutex);
   auto certs = std::vector<rtc::Buffer*>();
   certs.reserve(_certs.size());
-  for (auto & cert : _certs) {
+  for (auto& cert : _certs) {
     certs.push_back(&cert);
   }
   CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), certs, result, Napi::Value)

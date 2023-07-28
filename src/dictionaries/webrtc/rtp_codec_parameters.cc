@@ -50,10 +50,10 @@ TO_NAPI_IMPL(webrtc::RtpCodecParameters, pair) {
 
 static webrtc::RtpCodecParameters NapiToRtpCodecParameters(
     const uint8_t payloadType,
-    const std::string & mimeType,
+    const std::string& mimeType,
     const uint64_t clockRate,
     const node_webrtc::Maybe<uint8_t> channels,
-    const node_webrtc::Maybe<std::string> & maybeSdpFmtpLine) {
+    const node_webrtc::Maybe<std::string>& maybeSdpFmtpLine) {
   webrtc::RtpCodecParameters result;
   auto indexOfSlash = mimeType.find('/');
   auto kindString = mimeType.substr(0, indexOfSlash);

@@ -92,8 +92,8 @@ class TestAudioDeviceModuleImpl // NOLINT(cppcoreguidelines-special-member-funct
 
   int32_t Init() override {
     thread_ = absl::make_unique<rtc::PlatformThread>(rtc::PlatformThread::SpawnJoinable([this]() {
-        TestAudioDeviceModuleImpl::Run(this);
-      }, "TestAudioDeviceModuleImpl", rtc::ThreadAttributes { rtc::ThreadPriority::kHigh }));
+      TestAudioDeviceModuleImpl::Run(this);
+    }, "TestAudioDeviceModuleImpl", rtc::ThreadAttributes { rtc::ThreadPriority::kHigh }));
     return 0;
   }
 

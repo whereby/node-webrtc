@@ -38,7 +38,7 @@ class RTCRtpSender: public AsyncObjectWrap<RTCRtpSender> {
 
   static Napi::FunctionReference& constructor();
 
-private:
+ private:
   static RTCRtpSender* Create(
       PeerConnectionFactory*,
       rtc::scoped_refptr<webrtc::RtpSenderInterface>);
