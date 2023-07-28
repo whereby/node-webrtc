@@ -259,7 +259,10 @@ else()
   set_property(TARGET libpeerconnection PROPERTY IMPORTED_LOCATION "${libwebrtc_binary_dir}/obj/pc/libpeerconnection.a")
 endif()
 
-set(libc++_include_dir "${libwebrtc_source_dir}/src/buildtools/third_party/libc++/trunk/include")
+set(libc++_include_dir
+  "${libwebrtc_source_dir}/src/buildtools/third_party/libc++/trunk/include"
+  "${libwebrtc_source_dir}/src/buildtools/third_party/libc++"
+)
 set(libc++abi_include_dir "${libwebrtc_source_dir}/src/buildtools/third_party/libc++abi/trunk/include")
 
 # NOTE(mroberts): I would like this to be INTERFACE.
