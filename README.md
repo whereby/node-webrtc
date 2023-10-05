@@ -12,8 +12,7 @@ aiming for spec-compliance and will eventually be tested using the W3C's
 number of [nonstandard APIs](docs/nonstandard-apis.md) for testing are also
 included.
 
-Install
--------
+## Install
 
 ```
 npm install @roamhq/wrtc
@@ -25,8 +24,7 @@ architecture, based on optional dependency filters.
 To install a debug build or cross-compile, you should [build from
 source](docs/build-from-source.md).
 
-Supported Platforms
--------------------
+## Supported Platforms
 
 The following platforms are confirmed to work with node-webrtc and have
 prebuilt binaries available. Since node-webrtc targets [N-API version
@@ -38,89 +36,29 @@ still be able to [build from source](docs/build-from-source.md).
   <thead>
     <tr>
       <td colspan="2" rowspan="2"></td>
-      <th colspan="3">Linux</th>
-      <th>macOS</th>
+      <th>Linux</th>
+      <th colspan="2">macOS</th>
       <th>Windows</th>
     </tr>
     <tr>
-      <th>armv7l</th>
+      <th>x64</th>
+      <th>x64</th>
       <th>arm64</th>
-      <th>x64</th>
-      <th>x64</th>
       <th>x64</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th rowspan="6">Node</th>
-      <th>8</th>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
+      <th rowspan="1">Node</th>
+      <th>18</th>
       <td align="center">✓</td>
-      <td align="center">✓</td>
-    </tr>
-    <tr>
-      <th>10</th>
         <td align="center">✓</td>
         <td align="center">✓</td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
-      <td align="center">✓</td>
-    </tr>
-    <tr>
-      <th>11</th>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
-      <td align="center">✓</td>
-    </tr>
-    <tr>
-      <th>12</th>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
-      <td align="center">✓</td>
-    </tr>
-    <tr>
-      <th>13</th>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
-      <td align="center">✓</td>
-    </tr>
-    <tr>
-      <th>14</th>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
-      <td align="center">✓</td>
-    </tr>
-    <tr>
-      <th rowspan="2">Electron</th>
-      <th>4</th>
-        <td align="center"></td>
-        <td align="center"></td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
-      <td align="center">✓</td>
-    </tr>
-    <tr>
-      <th>5</th>
-        <td align="center"></td>
-        <td align="center"></td>
-        <td align="center">✓</td>
-      <td align="center">✓</td>
       <td align="center">✓</td>
     </tr>
   </tbody>
 </table>
 
-Examples
---------
+## Examples
 
 See [node-webrtc/node-webrtc-examples](https://github.com/node-webrtc/node-webrtc-examples).
