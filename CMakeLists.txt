@@ -12,8 +12,6 @@ project(${MODULE})
 include(ExternalProject)
 find_package(Git REQUIRED)
 find_package(Threads REQUIRED)
-find_program(iwyu_path OPTIONAL NAMES include-what-you-use iwyu)
-find_program(clang_tidy_path OPTIONAL NAMES clang-tidy)
 
 # depot_tools
 # -----------------------------------------------------------------------------
@@ -151,7 +149,19 @@ list(APPEND GN_GEN_ARGS
   use_lld=false
 )
 
-if (APPLE)
+macro(assign_bool var)
+  if (${ARGN})
+    set(${var} ON)
+  else()
+    set(${var} OFF)
+  endif()
+endmacro()
+
+assign_bool(use_custom_libcxx APPLE)
+assign_bool(is_arm32 "$ENV{TARGET_ARCH}" STREQUAL "arm")
+assign_bool(is_arm64 "$ENV{TARGET_ARCH}" STREQUAL "arm64")
+
+if (${use_custom_libcxx})
   list(APPEND GN_GEN_ARGS
     use_custom_libcxx=true
   )
@@ -161,12 +171,12 @@ else()
   )
 endif()
 
-if ("$ENV{TARGET_ARCH}" STREQUAL "arm")
+if (${is_arm32})
   list(APPEND GN_GEN_ARGS
     target_cpu="arm"
     rtc_build_tools=true
   )
-elseif ("$ENV{TARGET_ARCH}" STREQUAL "arm64")
+elseif (${is_arm64})
   list(APPEND GN_GEN_ARGS
     target_cpu="arm64"
     rtc_build_tools=true
@@ -304,14 +314,6 @@ set_target_properties(${MODULE} PROPERTIES PREFIX "" SUFFIX ".node")
 
 set_property(TARGET ${MODULE} PROPERTY CXX_STANDARD 14)
 
-if(NOT iwyu_path STREQUAL "iwyu_path-NOTFOUND")
-  set_property(TARGET ${MODULE} PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path} -Xiwyu --mapping_file=${CMAKE_SOURCE_DIR}/.iwyu.imp)
-endif()
-
-if(NOT clang_tidy_path STREQUAL "clang_tidy_path-NOTFOUND")
-  set_property(TARGET ${MODULE} PROPERTY CXX_CLANG_TIDY ${clang_tidy_path})
-endif()
-
 # NOTE(mroberts): Workaround for
 #
 #   https://gitlab.kitware.com/cmake/cmake/issues/15052
@@ -395,7 +397,7 @@ else()
     "$<$<CONFIG:Debug>:-DDEBUG>"
   )
 
-  if (APPLE OR "$ENV{TARGET_ARCH}" STREQUAL "arm" OR "$ENV{TARGET_ARCH}" STREQUAL "arm64")
+  if (${use_custom_libcxx})
     # NOTE(mroberts): Workaround for
     #
     #   https://gitlab.kitware.com/cmake/cmake/issues/15052
@@ -459,33 +461,6 @@ else()
     target_compile_options(${MODULE} PRIVATE
       -fpermissive
     )
-
-    if ("$ENV{TARGET_ARCH}" STREQUAL "arm" OR "$ENV{TARGET_ARCH}" STREQUAL "arm64")
-      set(CMAKE_SYSTEM_NAME Linux)
-      set(CMAKE_SYSTEM_PROCESSOR "$ENV{TARGET_ARCH}")
-      set(tools $ENV{ARM_TOOLS_PATH})
-
-      set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-      set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-      set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-      set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
-
-      if ("$ENV{TARGET_ARCH}" STREQUAL "arm")
-        set(CMAKE_SYSROOT ${libwebrtc_source_dir}/src/build/linux/debian_sid_arm-sysroot)
-        target_compile_options(${MODULE} PRIVATE
-          -march=armv7-a
-          -mfloat-abi=hard
-          -mtune=generic-armv7-a
-          -mfpu=neon
-        )
-        set(CMAKE_C_COMPILER ${tools}/bin/arm-linux-gnueabihf-gcc)
-        set(CMAKE_CXX_COMPILER ${tools}/bin/arm-linux-gnueabihf-g++)
-      else()
-        set(CMAKE_SYSROOT ${libwebrtc_source_dir}/src/build/linux/debian_sid_arm64-sysroot)
-        set(CMAKE_C_COMPILER ${tools}/bin/aarch64-linux-gnu-gcc)
-        set(CMAKE_CXX_COMPILER ${tools}/bin/aarch64-linux-gnu-g++)
-      endif()
-    endif()
   endif()
 endif()
 

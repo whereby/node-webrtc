@@ -6,6 +6,8 @@
 .vs
 .DS_Store
 build
+build-*
+gcc-arm-*
 compile_commands.json
 example
 node_modules

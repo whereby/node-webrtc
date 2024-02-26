@@ -9,8 +9,4 @@ case "$(uname -s)" in
   export TARGETS="$TARGETS libc++ libc++abi"
 esac
 
-if [ -z "$PARALLELISM" ]; then
-  ninja $TARGETS
-else
-  ninja $TARGETS -j $PARALLELISM
-fi
+ninja $TARGETS

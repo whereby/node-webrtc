@@ -3,8 +3,11 @@
 'use strict';
 
 const { spawnSync } = require('child_process');
+const os = require('os');
+const platform = os.platform();
+const arch = process.env.TARGET_ARCH ?? os.arch();
 
-const args = ['configure'];
+const args = ['-O', `build-${platform}-${arch}`, '-a', arch];
 
 if (process.env.DEBUG) {
   args.push(...[
@@ -26,7 +29,7 @@ if (process.env.TARGET_ARCH) {
 
 function main() {
   console.log('Running cmake-js ' + args.join(' '));
-  let { status } = spawnSync('cmake-js', args, {
+  let { status } = spawnSync('cmake-js', ['configure', ...args], {
     shell: true,
     stdio: 'inherit'
   });
@@ -35,7 +38,7 @@ function main() {
   }
 
   console.log('Running cmake-js build');
-  status = spawnSync('cmake-js', ['build'], {
+  status = spawnSync('cmake-js', ['build', ...args], {
     shell: true,
     stdio: 'inherit'
   }).status;
