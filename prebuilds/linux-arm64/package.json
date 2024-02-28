@@ -1,13 +1,13 @@
 {
-  "name": "@roamhq/wrtc-darwin-x64",
+  "name": "@roamhq/wrtc-linux-arm64",
   "version": "0.7.2",
-  "description": "The MacOS 64-bit binary for @roamhq/wrtc.",
+  "description": "The Linux 64-bit ARM binary for @roamhq/wrtc.",
   "repository": "https://github.com/WonderInventions/node-webrtc",
   "license": "BSD-2-Clause",
   "os": [
-    "darwin"
+    "linux"
   ],
   "cpu": [
-    "x64"
+    "arm64"
   ]
 }
