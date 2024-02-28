@@ -1,3 +1,9 @@
+0.7.2
+=====
+
+Added `linux-arm64` prebuilt binary, built & unit-tested all x64 binaries on
+Node 20.
+
 0.7.0
 =====
 
