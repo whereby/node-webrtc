@@ -26,7 +26,7 @@ CALL python src\build\vs_toolchain.py update --force
 IF %ERRORLEVEL% NEQ 0 GOTO ERROR
 
 ECHO download clang
-CALL python src\tools\clang\scripts\update.py
+CALL python3 src\tools\clang\scripts\update.py
 IF %ERRORLEVEL% NEQ 0 GOTO ERROR
 
 ECHO rmdir webrtc
