@@ -10,17 +10,11 @@ macro(assign_bool var)
   endif()
 endmacro()
 
-if (DEFINED "$ENV{TARGET_ARCH}")
-  set(TARGET_ARCH "$ENV{TARGET_ARCH}")
-else()
-  set(TARGET_ARCH CMAKE_HOST_SYSTEM_PROCESSOR)
-endif()
+assign_bool(use_custom_libcxx ${APPLE})
+assign_bool(is_arm32 "y$ENV{TARGET_ARCH}" STREQUAL "yarm")
+assign_bool(is_arm64 "y$ENV{TARGET_ARCH}" STREQUAL "yarm64")
 
-assign_bool(use_custom_libcxx APPLE)
-assign_bool(is_arm32 TARGET_ARCH STREQUAL "arm")
-assign_bool(is_arm64 TARGET_ARCH STREQUAL "arm64")
-
-if (APPLE AND "$ENV{TARGET_ARCH}" STREQUAL "arm64")
+if (APPLE AND ${is_arm64})
   set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "" FORCE)
 endif()
 
