@@ -6,14 +6,14 @@ node-webrtc uses [cmake-js](https://github.com/cmake-js/cmake-js) to build
 from source. When building from source, in addition to the prerequisites
 required by cmake-js, you will need
 
-* Git
-* Ninja
-* CMake 3.15 or newer
-* Linux: GCC 10.1 or newer
-* MacOS: Xcode 12 or newer
-* Windows: Microsoft Visual Studio 2022 or newer, with the Clang toolchain installed
-* Check the [additional prerequisites listed by WebRTC](https://webrtc.github.io/webrtc-org/native-code/development/prerequisite-sw/) - although their install is automated by the CMake scripts provided
-
+- Git
+- Ninja
+- CMake 3.15 or newer
+- Linux: GCC 10.1 or newer
+- MacOS: Xcode 12 or newer
+  - MacOSX11.3.sdk installed, see https://github.com/phracker/MacOSX-SDKs
+- Windows: Microsoft Visual Studio 2022 or newer, with the Clang toolchain installed
+- Check the [additional prerequisites listed by WebRTC](https://webrtc.github.io/webrtc-org/native-code/development/prerequisite-sw/) - although their install is automated by the CMake scripts provided
 
 ## Install
 
@@ -31,10 +31,10 @@ npm run build
 
 ## Subsequent Builds
 
-Subsequent builds can be triggered with `cmake`:
+Subsequent builds can be triggered with `cmake`, e.g. on MacOS:
 
 ```
-cmake --build build
+cmake --build build-darwin-x64
 ```
 
 You can pass either `--debug` or `--release` to build a debug or release build
@@ -77,9 +77,17 @@ this project):
 git config core.longpaths true
 ```
 
-Creating symbolic links with MKLINK is used by the build script but is disabled for non-Administrative users by default with a local security policy. On Windows 10, fix this with Run (Windows-R) then `gpedit.msc`. Edit key "Local Computer Policy -> Windows Settings -> Security Settings -> Local Policies -> User Rights Assignment -> Create Symbolic Links" and add your user name. Log out and in to change the policy. Note the [associated security vunerability](https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/create-symbolic-links#vulnerability).
+Creating symbolic links with MKLINK is used by the build script but is disabled
+for non-Administrative users by default with a local security policy. On
+Windows 10, fix this with Run (Windows-R) then `gpedit.msc`. Edit key "Local
+Computer Policy -> Windows Settings -> Security Settings -> Local Policies ->
+User Rights Assignment -> Create Symbolic Links" and add your user name. Log
+out and in to change the policy. Note the [associated security
+vunerability](https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/create-symbolic-links#vulnerability).
 
-The Windows SDK debugging tools should be installed. One way to achieve this is to [Download the Windows Driver Kit](https://docs.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk).
+The Windows SDK debugging tools should be installed. One way to achieve this is
+to [Download the Windows Driver
+Kit](https://docs.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk).
 
 # Test
 
