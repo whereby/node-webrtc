@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /* eslint no-console:0, no-process-env:0 */
 "use strict";
-"use strict";
 
 const os = require("os");
 const { spawnSync } = require("child_process");
@@ -17,7 +16,7 @@ if (platform === "win32") {
   args.push(...["-G", "Ninja"]);
 }
 
-if (arch !== os.arch) {
+if (arch !== os.arch()) {
   args.push(
     `--CDCMAKE_TOOLCHAIN_FILE=toolchains/${platform}-${arch}.toolchain`
   );

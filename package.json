@@ -24,13 +24,12 @@
     "lib",
     "types"
   ],
-  "dependencies": {},
   "optionalDependencies": {
-    "@roamhq/wrtc-win32-x64": "0.7.2",
     "@roamhq/wrtc-darwin-arm64": "0.7.2",
     "@roamhq/wrtc-darwin-x64": "0.7.2",
-    "@roamhq/wrtc-linux-x64": "0.7.2",
     "@roamhq/wrtc-linux-arm64": "0.7.2",
+    "@roamhq/wrtc-linux-x64": "0.7.2",
+    "@roamhq/wrtc-win32-x64": "0.7.2",
     "domexception": "^4.0.0"
   },
   "devDependencies": {
@@ -39,12 +38,14 @@
     "cross-env": "^5.1.4",
     "eslint": "^4.14.0",
     "node-addon-api": "^7.0.0",
+    "patch-package": "^8.0.0",
     "recursive-copy": "^2.0.14",
     "simple-peer": "~9.7.0",
     "tape": "^5.6.1",
     "temp": "^0.9.4"
   },
   "scripts": {
+    "postinstall": "patch-package --error-on-warn",
     "build": "node scripts/build-from-source.js",
     "make-prebuilt": "node scripts/make-prebuilt.js",
     "install-example": "node scripts/install-example.js",
@@ -52,4 +53,3 @@
     "test": "node --expose-gc test/all.js"
   }
 }
-
