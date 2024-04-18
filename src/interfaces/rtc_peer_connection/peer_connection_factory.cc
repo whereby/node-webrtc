@@ -13,7 +13,6 @@
 #include <webrtc/api/audio_codecs/builtin_audio_encoder_factory.h>
 #include <webrtc/api/create_peerconnection_factory.h>
 #include <webrtc/api/peer_connection_interface.h>
-#include <webrtc/api/task_queue/default_task_queue_factory.h>
 #include <webrtc/api/video_codecs/builtin_video_decoder_factory.h>
 #include <webrtc/api/video_codecs/builtin_video_encoder_factory.h>
 #include <webrtc/api/video_codecs/video_decoder_factory.h>
@@ -25,6 +24,8 @@
 #include <webrtc/rtc_base/location.h>
 #include <webrtc/rtc_base/ssl_adapter.h>
 #include <webrtc/rtc_base/thread.h>
+
+#include "src/webrtc/test_audio_device_module.h"
 
 namespace node_webrtc {
 
@@ -49,13 +50,7 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo &info)
   }
 
   // TODO(mroberts): Read `audioLayer` from some PeerConnectionFactoryOptions?
-  // auto audioLayer = MakeNothing<webrtc::AudioDeviceModule::AudioLayer>();
-  //
-  // TODO(mroberts): I'm just trying to get this to compile
-  // right now. We need to call something like
-  // CreateDefaultTaskQueueFactory(). This code is currently
-  // unused, though.
-  // webrtc::AudioDeviceModule::Create(audioLayer, nullptr);
+  auto audioLayer = MakeNothing<webrtc::AudioDeviceModule::AudioLayer>();
 
   _workerThread = rtc::Thread::CreateWithSocketServer();
   assert(_workerThread);
@@ -69,17 +64,24 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo &info)
   assert(result);
   (void)result;
 
-  _taskQueueFactory = webrtc::CreateDefaultTaskQueueFactory();
-  assert(_taskQueueFactory != nullptr);
-
   _audioDeviceModule =
       _workerThread->Invoke<rtc::scoped_refptr<webrtc::AudioDeviceModule>>(
-          RTC_FROM_HERE, [this]() {
-            return webrtc::TestAudioDeviceModule::Create(
-                _taskQueueFactory.get(),
-                webrtc::TestAudioDeviceModule::CreatePulsedNoiseCapturer(0,
-                                                                         48000),
-                webrtc::TestAudioDeviceModule::CreateDiscardRenderer(48000));
+          RTC_FROM_HERE, [audioLayer]() {
+            return audioLayer
+                .Map([](auto audioLayer) {
+                  // TODO(mroberts): I'm just trying to get this to compile
+                  // right now. We need to call something like
+                  // CreateDefaultTaskQueueFactory(). This code is currently
+                  // unused, though.
+                  return webrtc::AudioDeviceModule::Create(audioLayer, nullptr);
+                })
+                .Or([]() {
+                  return TestAudioDeviceModule::CreateTestAudioDeviceModule(
+                      webrtc::TestAudioDeviceModule::CreatePulsedNoiseCapturer(
+                          0, 48000),
+                      webrtc::TestAudioDeviceModule::CreateDiscardRenderer(
+                          48000));
+                });
           });
 
   _signalingThread = rtc::Thread::Create();
