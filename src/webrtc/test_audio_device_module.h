@@ -51,6 +51,9 @@ public:
       std::unique_ptr<webrtc::TestAudioDeviceModule::Renderer> renderer,
       float speed = 1);
 
+  static std::unique_ptr<webrtc::TestAudioDeviceModule::Capturer>
+  CreateZeroCapturer(int sampling_frequency_in_hz, int num_channels);
+
   int32_t Init() override = 0;
 
   int32_t RegisterAudioCallback(webrtc::AudioTransport *callback) override = 0;

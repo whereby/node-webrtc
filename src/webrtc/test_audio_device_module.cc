@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iosfwd>
+#include <memory>
 #include <type_traits>
 #include <vector>
 
@@ -270,6 +271,32 @@ private:
   bool stop_thread_ RTC_GUARDED_BY(lock_) = false;
 };
 
+class ZeroCapturerImpl final : public webrtc::TestAudioDeviceModule::Capturer {
+public:
+  ZeroCapturerImpl(int sampling_frequency_in_hz, int num_channels)
+      : sampling_frequency_in_hz_(sampling_frequency_in_hz),
+        num_channels_(num_channels) {}
+
+  int SamplingFrequency() const override { return sampling_frequency_in_hz_; }
+
+  int NumChannels() const override { return num_channels_; }
+
+  bool Capture(rtc::BufferT<int16_t> *buffer) override {
+    buffer->SetData(
+        TestAudioDeviceModule::SamplesPerFrame(sampling_frequency_in_hz_) *
+            num_channels_,
+        [&](rtc::ArrayView<int16_t> data) {
+          std::fill(data.begin(), data.end(), 0);
+          return data.size();
+        });
+    return true;
+  }
+
+private:
+  int sampling_frequency_in_hz_;
+  const int num_channels_;
+};
+
 } // namespace
 
 size_t TestAudioDeviceModule::SamplesPerFrame(int sampling_frequency_in_hz) {
@@ -283,6 +310,14 @@ TestAudioDeviceModule::CreateTestAudioDeviceModule(
     float speed) {
   return new rtc::RefCountedObject<TestAudioDeviceModuleImpl>(
       std::move(capturer), std::move(renderer), speed);
+}
+
+std::unique_ptr<webrtc::TestAudioDeviceModule::Capturer>
+TestAudioDeviceModule::CreateZeroCapturer(
+
+    int sampling_frequency_in_hz, int num_channels) {
+  return std::make_unique<ZeroCapturerImpl>(sampling_frequency_in_hz,
+                                            num_channels);
 }
 
 } // namespace node_webrtc
