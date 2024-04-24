@@ -1,3 +1,12 @@
+0.7.3
+=====
+
+Bug Fixes
+---------
+
+- `ondata` audio problems should be fixed
+    (<https://github.com/WonderInventions/node-webrtc/issues/2>)
+
 0.7.2
 =====
 
