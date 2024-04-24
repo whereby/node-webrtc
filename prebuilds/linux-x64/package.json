@@ -1,6 +1,6 @@
 {
   "name": "@roamhq/wrtc-linux-x64",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "The Linux 64-bit binary for @roamhq/wrtc.",
   "repository": "https://github.com/WonderInventions/node-webrtc",
   "license": "BSD-2-Clause",
@@ -11,4 +11,3 @@
     "x64"
   ]
 }
-
