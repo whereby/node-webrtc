@@ -20,9 +20,8 @@ namespace node_webrtc {
  * from one thread and dequeue them from another (or the same).
  * @tparam T the Event target type
  */
-template <typename T>
-class EventQueue {
- public:
+template <typename T> class EventQueue {
+public:
   /**
    * Enqueue an Event.
    * @param event the event to enqueue
@@ -50,9 +49,9 @@ class EventQueue {
     return event;
   }
 
- private:
+private:
   std::queue<std::unique_ptr<Event<T>>> _events;
   std::mutex _mutex{};
 };
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

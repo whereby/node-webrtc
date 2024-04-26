@@ -6,11 +6,11 @@
 // IWYU pragma: no_include "src/dictionaries/macros/impls.h"
 
 #define UNSIGNED_SHORT_RANGE UnsignedShortRange
-#define UNSIGNED_SHORT_RANGE_LIST \
-  DICT_OPTIONAL(uint16_t, min, "min") \
+#define UNSIGNED_SHORT_RANGE_LIST                                              \
+  DICT_OPTIONAL(uint16_t, min, "min")                                          \
   DICT_OPTIONAL(uint16_t, max, "max")
 
-#define DICT(X) UNSIGNED_SHORT_RANGE ## X
-#include "src/dictionaries/macros/def.h"
+#define DICT(X) UNSIGNED_SHORT_RANGE##X
 #include "src/dictionaries/macros/decls.h"
+#include "src/dictionaries/macros/def.h"
 #undef DICT

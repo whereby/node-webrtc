@@ -11,16 +11,15 @@
 
 namespace node_webrtc {
 
-template<typename T, typename U, typename ...V>
-class Wrap {
- public:
+template <typename T, typename U, typename... V> class Wrap {
+public:
   Wrap() = delete;
 
-  explicit Wrap(T(*Create)(V..., U)): _Create(Create) {}
+  explicit Wrap(T (*Create)(V..., U)) : _Create(Create) {}
 
-  Wrap(Wrap const&) = delete;
+  Wrap(Wrap const &) = delete;
 
-  Wrap& operator=(Wrap const&) = delete;
+  Wrap &operator=(Wrap const &) = delete;
 
   T GetOrCreate(V... args, U key) {
     return _map.computeIfAbsent(key, [this, key, args...]() {
@@ -34,9 +33,7 @@ class Wrap {
     });
   }
 
-  T Get(U key) {
-    return _map.get(key).FromMaybe(nullptr);
-  }
+  T Get(U key) { return _map.get(key).FromMaybe(nullptr); }
 
   void Release(T value) {
     if (!value->IsEmpty() && _map.reverseHas(value)) {
@@ -47,9 +44,9 @@ class Wrap {
     _map.reverseRemove(value);
   }
 
- private:
-  T(*_Create)(V..., U);
+private:
+  T (*_Create)(V..., U);
   BidiMap<U, T> _map;
 };
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

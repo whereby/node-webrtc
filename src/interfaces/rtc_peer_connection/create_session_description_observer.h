@@ -14,28 +14,29 @@
 #include "src/interfaces/rtc_peer_connection.h"
 #include "src/node/promise.h"
 
-namespace webrtc { class RTCError; }
+namespace webrtc {
+class RTCError;
+}
 
 namespace node_webrtc {
 
 class RTCPeerConnection;
 
 class CreateSessionDescriptionObserver
-  : public PromiseCreator<RTCPeerConnection>
-  , public webrtc::CreateSessionDescriptionObserver {
- public:
-  CreateSessionDescriptionObserver(
-      RTCPeerConnection* peer_connection,
-      Napi::Promise::Deferred deferred)
-    : PromiseCreator(peer_connection, deferred)
-    , _peer_connection(peer_connection) {}
+    : public PromiseCreator<RTCPeerConnection>,
+      public webrtc::CreateSessionDescriptionObserver {
+public:
+  CreateSessionDescriptionObserver(RTCPeerConnection *peer_connection,
+                                   Napi::Promise::Deferred deferred)
+      : PromiseCreator(peer_connection, deferred),
+        _peer_connection(peer_connection) {}
 
-  void OnSuccess(webrtc::SessionDescriptionInterface*) override;
+  void OnSuccess(webrtc::SessionDescriptionInterface *) override;
 
   void OnFailure(webrtc::RTCError) override;
 
- private:
-  RTCPeerConnection* _peer_connection;
+private:
+  RTCPeerConnection *_peer_connection;
 };
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

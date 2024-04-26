@@ -7,17 +7,20 @@
 namespace node_webrtc {
 
 struct RTCAnswerOptions {
-  RTCAnswerOptions(): options(webrtc::PeerConnectionInterface::RTCOfferAnswerOptions()) {}
-  explicit RTCAnswerOptions(const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions options): options(options) {}
+  RTCAnswerOptions()
+      : options(webrtc::PeerConnectionInterface::RTCOfferAnswerOptions()) {}
+  explicit RTCAnswerOptions(
+      const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions options)
+      : options(options) {}
   const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions options;
 };
 
-}  // namespace node_webrtc
+} // namespace node_webrtc
 
 #define RTC_ANSWER_OPTIONS RTCAnswerOptions
-#define RTC_ANSWER_OPTIONS_LIST \
+#define RTC_ANSWER_OPTIONS_LIST                                                \
   DICT_DEFAULT(bool, voiceActivityDetection, "voiceActivityDetection", true)
 
-#define DICT(X) RTC_ANSWER_OPTIONS ## X
+#define DICT(X) RTC_ANSWER_OPTIONS##X
 #include "src/dictionaries/macros/decls.h"
 #undef DICT

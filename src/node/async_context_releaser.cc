@@ -2,14 +2,14 @@
 
 namespace node_webrtc {
 
-AsyncContextReleaser* AsyncContextReleaser::_default = nullptr;
+AsyncContextReleaser *AsyncContextReleaser::_default = nullptr;
 
-Napi::FunctionReference& AsyncContextReleaser::constructor() {
+Napi::FunctionReference &AsyncContextReleaser::constructor() {
   static Napi::FunctionReference constructor;
   return constructor;
 }
 
-void AsyncContextReleaser::Release(Napi::AsyncContext* context) {
+void AsyncContextReleaser::Release(Napi::AsyncContext *context) {
   _contexts_mutex.lock();
   _contexts.push(context);
   _contexts_mutex.unlock();
@@ -27,7 +27,7 @@ void AsyncContextReleaser::Execute(Napi::Env env) {
   _contexts_mutex.unlock();
 }
 
-AsyncContextReleaser* AsyncContextReleaser::GetDefault() {
+AsyncContextReleaser *AsyncContextReleaser::GetDefault() {
   if (!_default) {
     Napi::HandleScope scope(constructor().Env());
     auto object = constructor().New({});
@@ -43,4 +43,4 @@ void AsyncContextReleaser::Init(Napi::Env env, Napi::Object) {
   constructor().SuppressDestruct();
 }
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

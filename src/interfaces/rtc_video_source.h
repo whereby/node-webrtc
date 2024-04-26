@@ -18,17 +18,21 @@
 #include "src/dictionaries/node_webrtc/rtc_video_source_init.h"
 #include "src/interfaces/rtc_peer_connection/peer_connection_factory.h"
 
-namespace webrtc { class VideoFrame; }
+namespace webrtc {
+class VideoFrame;
+}
 
 namespace node_webrtc {
 
 class RTCVideoTrackSource : public rtc::AdaptedVideoTrackSource {
- public:
+public:
   RTCVideoTrackSource()
-    : rtc::AdaptedVideoTrackSource(), _is_screencast(false) {}
+      : rtc::AdaptedVideoTrackSource(), _is_screencast(false) {}
 
-  RTCVideoTrackSource(const bool is_screencast, const absl::optional<bool> needs_denoising)
-    : rtc::AdaptedVideoTrackSource(), _is_screencast(is_screencast), _needs_denoising(needs_denoising) {}
+  RTCVideoTrackSource(const bool is_screencast,
+                      const absl::optional<bool> needs_denoising)
+      : rtc::AdaptedVideoTrackSource(), _is_screencast(is_screencast),
+        _needs_denoising(needs_denoising) {}
 
   ~RTCVideoTrackSource() override {
     PeerConnectionFactory::Release();
@@ -39,47 +43,40 @@ class RTCVideoTrackSource : public rtc::AdaptedVideoTrackSource {
     return webrtc::MediaSourceInterface::SourceState::kLive;
   }
 
-  bool remote() const override {
-    return false;
-  }
+  bool remote() const override { return false; }
 
-  bool is_screencast() const override {
-    return _is_screencast;
-  }
+  bool is_screencast() const override { return _is_screencast; }
 
   absl::optional<bool> needs_denoising() const override {
     return _needs_denoising;
   }
 
-  void PushFrame(const webrtc::VideoFrame& frame) {
-    this->OnFrame(frame);
-  }
+  void PushFrame(const webrtc::VideoFrame &frame) { this->OnFrame(frame); }
 
- private:
-  PeerConnectionFactory* _factory = PeerConnectionFactory::GetOrCreateDefault();
+private:
+  PeerConnectionFactory *_factory = PeerConnectionFactory::GetOrCreateDefault();
   const bool _is_screencast;
   const absl::optional<bool> _needs_denoising;
 };
 
-class RTCVideoSource
-  : public Napi::ObjectWrap<RTCVideoSource> {
- public:
-  explicit RTCVideoSource(const Napi::CallbackInfo&);
+class RTCVideoSource : public Napi::ObjectWrap<RTCVideoSource> {
+public:
+  explicit RTCVideoSource(const Napi::CallbackInfo &);
 
   static void Init(Napi::Env, Napi::Object);
 
- private:
-  static Napi::FunctionReference& constructor();
+private:
+  static Napi::FunctionReference &constructor();
 
-  Napi::Value New(const Napi::CallbackInfo&);
+  Napi::Value New(const Napi::CallbackInfo &);
 
-  Napi::Value GetIsScreencast(const Napi::CallbackInfo&);
-  Napi::Value GetNeedsDenoising(const Napi::CallbackInfo&);
+  Napi::Value GetIsScreencast(const Napi::CallbackInfo &);
+  Napi::Value GetNeedsDenoising(const Napi::CallbackInfo &);
 
-  Napi::Value CreateTrack(const Napi::CallbackInfo&);
-  Napi::Value OnFrame(const Napi::CallbackInfo&);
+  Napi::Value CreateTrack(const Napi::CallbackInfo &);
+  Napi::Value OnFrame(const Napi::CallbackInfo &);
 
   rtc::scoped_refptr<RTCVideoTrackSource> _source;
 };
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

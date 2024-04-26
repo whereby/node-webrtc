@@ -10,17 +10,15 @@
 #include "src/converters.h"
 #include "src/converters/napi.h"
 
-#define CREATE_DEFERRED(E, D) \
-  auto deferred = Napi::Promise::Deferred::New(E);
+#define CREATE_DEFERRED(E, D) auto deferred = Napi::Promise::Deferred::New(E);
 
-#define RETURNS_PROMISE(R) \
-  CREATE_RESOLVER(R) \
+#define RETURNS_PROMISE(R)                                                     \
+  CREATE_RESOLVER(R)                                                           \
   info.GetReturnValue().Set(R->GetPromise());
 
 namespace node_webrtc {
 
-template <typename T>
-bool Resolve(Napi::Promise::Deferred deferred, T input) {
+template <typename T> bool Resolve(Napi::Promise::Deferred deferred, T input) {
   auto env = deferred.Env();
   auto maybeOutput = From<Napi::Value>(std::make_pair(env, input));
   if (maybeOutput.IsValid()) {
@@ -31,8 +29,7 @@ bool Resolve(Napi::Promise::Deferred deferred, T input) {
   return false;
 }
 
-template <typename T>
-bool Reject(Napi::Promise::Deferred deferred, T input) {
+template <typename T> bool Reject(Napi::Promise::Deferred deferred, T input) {
   auto env = deferred.Env();
   auto maybeOutput = From<Napi::Value>(std::make_pair(env, input));
   if (maybeOutput.IsValid()) {
@@ -43,4 +40,4 @@ bool Reject(Napi::Promise::Deferred deferred, T input) {
   return false;
 }
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

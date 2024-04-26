@@ -14,8 +14,8 @@
 #include <webrtc/api/scoped_refptr.h>
 
 #include "src/enums/node_webrtc/binary_type.h"
-#include "src/node/event_queue.h"
 #include "src/node/async_object_wrap_with_loop.h"
+#include "src/node/event_queue.h"
 #include "src/node/wrap.h"
 
 namespace node_webrtc {
@@ -23,16 +23,16 @@ namespace node_webrtc {
 class DataChannelObserver;
 class PeerConnectionFactory;
 
-class RTCDataChannel
-  : public AsyncObjectWrapWithLoop<RTCDataChannel>
-  , public webrtc::DataChannelObserver {
+class RTCDataChannel : public AsyncObjectWrapWithLoop<RTCDataChannel>,
+                       public webrtc::DataChannelObserver {
   friend class node_webrtc::DataChannelObserver;
- public:
-  explicit RTCDataChannel(const Napi::CallbackInfo&);
+
+public:
+  explicit RTCDataChannel(const Napi::CallbackInfo &);
 
   ~RTCDataChannel() override;
 
-  static Napi::FunctionReference& constructor();
+  static Napi::FunctionReference &constructor();
 
   static void Init(Napi::Env, Napi::Object);
 
@@ -40,39 +40,39 @@ class RTCDataChannel
   // DataChannelObserver implementation.
   //
   void OnStateChange() override;
-  void OnMessage(const webrtc::DataBuffer& buffer) override;
+  void OnMessage(const webrtc::DataBuffer &buffer) override;
 
   void OnPeerConnectionClosed();
 
-  static ::node_webrtc::Wrap <
-  RTCDataChannel*,
-  rtc::scoped_refptr<webrtc::DataChannelInterface>,
-  node_webrtc::DataChannelObserver*
-  > * wrap();
+  static ::node_webrtc::Wrap<RTCDataChannel *,
+                             rtc::scoped_refptr<webrtc::DataChannelInterface>,
+                             node_webrtc::DataChannelObserver *> *
+  wrap();
 
- private:
-  static RTCDataChannel* Create(
-      node_webrtc::DataChannelObserver*,
-      rtc::scoped_refptr<webrtc::DataChannelInterface>);
+private:
+  static RTCDataChannel *
+  Create(node_webrtc::DataChannelObserver *,
+         rtc::scoped_refptr<webrtc::DataChannelInterface>);
 
-  static void HandleStateChange(RTCDataChannel&, webrtc::DataChannelInterface::DataState);
-  static void HandleMessage(RTCDataChannel&, const webrtc::DataBuffer& buffer);
+  static void HandleStateChange(RTCDataChannel &,
+                                webrtc::DataChannelInterface::DataState);
+  static void HandleMessage(RTCDataChannel &, const webrtc::DataBuffer &buffer);
 
-  Napi::Value Send(const Napi::CallbackInfo&);
-  Napi::Value Close(const Napi::CallbackInfo&);
+  Napi::Value Send(const Napi::CallbackInfo &);
+  Napi::Value Close(const Napi::CallbackInfo &);
 
-  Napi::Value GetBufferedAmount(const Napi::CallbackInfo&);
-  Napi::Value GetId(const Napi::CallbackInfo&);
-  Napi::Value GetLabel(const Napi::CallbackInfo&);
-  Napi::Value GetMaxPacketLifeTime(const Napi::CallbackInfo&);
-  Napi::Value GetMaxRetransmits(const Napi::CallbackInfo&);
-  Napi::Value GetNegotiated(const Napi::CallbackInfo&);
-  Napi::Value GetOrdered(const Napi::CallbackInfo&);
-  Napi::Value GetPriority(const Napi::CallbackInfo&);
-  Napi::Value GetProtocol(const Napi::CallbackInfo&);
-  Napi::Value GetBinaryType(const Napi::CallbackInfo&);
-  Napi::Value GetReadyState(const Napi::CallbackInfo&);
-  void SetBinaryType(const Napi::CallbackInfo&, const Napi::Value&);
+  Napi::Value GetBufferedAmount(const Napi::CallbackInfo &);
+  Napi::Value GetId(const Napi::CallbackInfo &);
+  Napi::Value GetLabel(const Napi::CallbackInfo &);
+  Napi::Value GetMaxPacketLifeTime(const Napi::CallbackInfo &);
+  Napi::Value GetMaxRetransmits(const Napi::CallbackInfo &);
+  Napi::Value GetNegotiated(const Napi::CallbackInfo &);
+  Napi::Value GetOrdered(const Napi::CallbackInfo &);
+  Napi::Value GetPriority(const Napi::CallbackInfo &);
+  Napi::Value GetProtocol(const Napi::CallbackInfo &);
+  Napi::Value GetBinaryType(const Napi::CallbackInfo &);
+  Napi::Value GetReadyState(const Napi::CallbackInfo &);
+  void SetBinaryType(const Napi::CallbackInfo &, const Napi::Value &);
 
   void CleanupInternals();
 
@@ -85,29 +85,31 @@ class RTCDataChannel
   bool _cached_ordered;
   std::string _cached_protocol;
   uint64_t _cached_buffered_amount;
-  PeerConnectionFactory* _factory;
+  PeerConnectionFactory *_factory;
   rtc::scoped_refptr<webrtc::DataChannelInterface> _jingleDataChannel;
 };
 
-class DataChannelObserver
-  : public EventQueue<RTCDataChannel>
-  , public webrtc::DataChannelObserver {
+class DataChannelObserver : public EventQueue<RTCDataChannel>,
+                            public webrtc::DataChannelObserver {
   friend class RTCDataChannel;
- public:
+
+public:
   DataChannelObserver(
-      PeerConnectionFactory* factory,
+      PeerConnectionFactory *factory,
       rtc::scoped_refptr<webrtc::DataChannelInterface> jingleDataChannel);
 
   ~DataChannelObserver() override;
 
   void OnStateChange() override;
-  void OnMessage(const webrtc::DataBuffer& buffer) override;
+  void OnMessage(const webrtc::DataBuffer &buffer) override;
 
-  rtc::scoped_refptr<webrtc::DataChannelInterface> channel() { return _jingleDataChannel; }
+  rtc::scoped_refptr<webrtc::DataChannelInterface> channel() {
+    return _jingleDataChannel;
+  }
 
- private:
-  PeerConnectionFactory* _factory;
+private:
+  PeerConnectionFactory *_factory;
   rtc::scoped_refptr<webrtc::DataChannelInterface> _jingleDataChannel;
 };
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

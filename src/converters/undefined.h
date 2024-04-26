@@ -5,10 +5,10 @@
 namespace node_webrtc {
 
 class Undefined {
- public:
+public:
   Undefined() = default;
 };
 
 DECLARE_TO_NAPI(Undefined)
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

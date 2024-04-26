@@ -22,9 +22,8 @@ namespace node_webrtc {
  * @tparam K the type of keys
  * @tparam V the type of values
  */
-template <typename K, typename V>
-class BidiMap {
- public:
+template <typename K, typename V> class BidiMap {
+public:
   /**
    * Construct an empty BidiMap.
    */
@@ -59,9 +58,7 @@ class BidiMap {
    * @return Nothing if the key was not present
    */
   Maybe<V> get(K key) const {
-    return has(key)
-        ? MakeJust(_keyToValue.at(key))
-        : MakeNothing<V>();
+    return has(key) ? MakeJust(_keyToValue.at(key)) : MakeNothing<V>();
   }
 
   /**
@@ -69,9 +66,7 @@ class BidiMap {
    * @param key
    * @return true if the BidiMap contains a value for the key
    */
-  bool has(K key) const {
-    return _keyToValue.count(key) > 0;
-  }
+  bool has(K key) const { return _keyToValue.count(key) > 0; }
 
   /**
    * Remove the key and its value from the BidiMap.
@@ -115,9 +110,8 @@ class BidiMap {
    * @return Nothing if the value was not present
    */
   Maybe<K> reverseGet(V value) const {
-    return reverseHas(value)
-        ? MakeJust(_valueToKey.at(value))
-        : MakeNothing<K>();
+    return reverseHas(value) ? MakeJust(_valueToKey.at(value))
+                             : MakeNothing<K>();
   }
 
   /**
@@ -125,9 +119,7 @@ class BidiMap {
    * @param value
    * @return true if the BidiMap contains a key for the value
    */
-  bool reverseHas(V value) const {
-    return _valueToKey.count(value) > 0;
-  }
+  bool reverseHas(V value) const { return _valueToKey.count(value) > 0; }
 
   /**
    * Remove a value and its key from the BidiMap.
@@ -187,12 +179,12 @@ class BidiMap {
     return MakeJust(bidiMap);
   }
 
- private:
-  BidiMap(const std::map<K, V>& keyToValue, const std::map<V, K>& valueToKey)
-    : _keyToValue(keyToValue), _valueToKey(valueToKey) {}
+private:
+  BidiMap(const std::map<K, V> &keyToValue, const std::map<V, K> &valueToKey)
+      : _keyToValue(keyToValue), _valueToKey(valueToKey) {}
 
   std::map<K, V> _keyToValue;
   std::map<V, K> _valueToKey;
 };
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

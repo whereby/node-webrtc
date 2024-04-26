@@ -14,10 +14,9 @@ namespace node_webrtc {
 DECLARE_FROM_NAPI(ImageData)
 FROM_NAPI_IMPL(ImageData, value) {
   return From<Napi::Object>(value).FlatMap<ImageData>([](auto object) {
-    return curry(ImageData::Create)
-        % GetRequired<int>(object, "width")
-        * GetRequired<int>(object, "height")
-        * GetRequired<Napi::ArrayBuffer>(object, "data");
+    return curry(ImageData::Create) % GetRequired<int>(object, "width") *
+           GetRequired<int>(object, "height") *
+           GetRequired<Napi::ArrayBuffer>(object, "data");
   });
 }
 
@@ -35,4 +34,4 @@ CONVERTER_IMPL(ImageData, RgbaImageData, imageData) {
 
 CONVERT_VIA(Napi::Value, ImageData, RgbaImageData)
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

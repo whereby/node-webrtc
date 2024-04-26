@@ -16,50 +16,53 @@
 #include "src/node/async_object_wrap.h"
 #include "src/node/wrap.h"
 
-namespace webrtc { class RtpReceiverInterface; }
+namespace webrtc {
+class RtpReceiverInterface;
+}
 
 namespace node_webrtc {
 
 class PeerConnectionFactory;
 
-class RTCRtpReceiver: public AsyncObjectWrap<RTCRtpReceiver> {
- public:
-  explicit RTCRtpReceiver(const Napi::CallbackInfo&);
+class RTCRtpReceiver : public AsyncObjectWrap<RTCRtpReceiver> {
+public:
+  explicit RTCRtpReceiver(const Napi::CallbackInfo &);
 
   ~RTCRtpReceiver() override;
 
   static void Init(Napi::Env, Napi::Object);
 
-  static ::node_webrtc::Wrap <
-  RTCRtpReceiver*,
-  rtc::scoped_refptr<webrtc::RtpReceiverInterface>,
-  PeerConnectionFactory*
-  > * wrap();
+  static ::node_webrtc::Wrap<RTCRtpReceiver *,
+                             rtc::scoped_refptr<webrtc::RtpReceiverInterface>,
+                             PeerConnectionFactory *> *
+  wrap();
 
-  static Napi::FunctionReference& constructor();
+  static Napi::FunctionReference &constructor();
 
-  rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver() { return _receiver; }
+  rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver() {
+    return _receiver;
+  }
 
- private:
-  static RTCRtpReceiver* Create(
-      PeerConnectionFactory*,
-      rtc::scoped_refptr<webrtc::RtpReceiverInterface>);
+private:
+  static RTCRtpReceiver *
+  Create(PeerConnectionFactory *,
+         rtc::scoped_refptr<webrtc::RtpReceiverInterface>);
 
-  Napi::Value GetTrack(const Napi::CallbackInfo&);
-  Napi::Value GetTransport(const Napi::CallbackInfo&);
-  Napi::Value GetRtcpTransport(const Napi::CallbackInfo&);
+  Napi::Value GetTrack(const Napi::CallbackInfo &);
+  Napi::Value GetTransport(const Napi::CallbackInfo &);
+  Napi::Value GetRtcpTransport(const Napi::CallbackInfo &);
 
-  static Napi::Value GetCapabilities(const Napi::CallbackInfo&);
+  static Napi::Value GetCapabilities(const Napi::CallbackInfo &);
 
-  Napi::Value GetParameters(const Napi::CallbackInfo&);
-  Napi::Value GetContributingSources(const Napi::CallbackInfo&);
-  Napi::Value GetSynchronizationSources(const Napi::CallbackInfo&);
-  Napi::Value GetStats(const Napi::CallbackInfo&);
+  Napi::Value GetParameters(const Napi::CallbackInfo &);
+  Napi::Value GetContributingSources(const Napi::CallbackInfo &);
+  Napi::Value GetSynchronizationSources(const Napi::CallbackInfo &);
+  Napi::Value GetStats(const Napi::CallbackInfo &);
 
-  PeerConnectionFactory* _factory;
+  PeerConnectionFactory *_factory;
   rtc::scoped_refptr<webrtc::RtpReceiverInterface> _receiver;
 };
 
-DECLARE_TO_AND_FROM_NAPI(RTCRtpReceiver*)
+DECLARE_TO_AND_FROM_NAPI(RTCRtpReceiver *)
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

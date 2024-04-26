@@ -25,11 +25,10 @@ namespace node_webrtc {
  * @tparam L the left type
  * @tparam R the right type
  */
-template <typename L, typename R>
-class Either {
- public:
+template <typename L, typename R> class Either {
+public:
   // TODO(mroberts): This is no good.
-  Either(): _is_right(false), _left(L()), _right(R()) {}
+  Either() : _is_right(false), _left(L()), _right(R()) {}
 
   /**
    * Either forms an applicative. Apply an Either.
@@ -38,9 +37,11 @@ class Either {
    * @return the result of applying the Either
    */
   template <typename F>
-  Either<L, typename std::result_of<F(R)>::type> Apply(const Either<L, F> f) const {
+  Either<L, typename std::result_of<F(R)>::type>
+  Apply(const Either<L, F> f) const {
     if (f.IsLeft()) {
-      return Either<L, typename std::result_of<F(R)>::type>::Left(f.UnsafeFromLeft());
+      return Either<L, typename std::result_of<F(R)>::type>::Left(
+          f.UnsafeFromLeft());
     } else if (IsLeft()) {
       return Either<L, typename std::result_of<F(R)>::type>::Left(_left);
     }
@@ -51,17 +52,13 @@ class Either {
    * Check whether or not the Either is "left".
    * @return true if the Either is left; otherwise, false
    */
-  bool IsLeft() const {
-    return !_is_right;
-  }
+  bool IsLeft() const { return !_is_right; }
 
   /**
    * Check whether or not the Either is "right".
    * @return true if the Either is right; otherwise, false
    */
-  bool IsRight() const {
-    return _is_right;
-  }
+  bool IsRight() const { return _is_right; }
 
   /**
    * Eliminate an Either. You must provide two functions for both the left and
@@ -72,7 +69,8 @@ class Either {
    * @return a value of type T
    */
   template <typename T>
-  T FromEither(std::function<T(const L)> fromLeft, std::function<T(const R)> fromRight) const {
+  T FromEither(std::function<T(const L)> fromLeft,
+               std::function<T(const R)> fromRight) const {
     return _is_right ? fromRight(_right) : fromLeft(_left);
   }
 
@@ -105,12 +103,14 @@ class Either {
   template <typename F>
   Either<L, typename std::result_of<F(R)>::type> Map(F f) const {
     return _is_right
-        ? Either<L, typename std::result_of<F(R)>::type>::Right(f(_right))
-        : Either<L, typename std::result_of<F(R)>::type>::Left(_left);
+               ? Either<L, typename std::result_of<F(R)>::type>::Right(
+                     f(_right))
+               : Either<L, typename std::result_of<F(R)>::type>::Left(_left);
   }
 
   /**
-   * Either forms an alternative. If "this" is "right", return this; otherwise, that
+   * Either forms an alternative. If "this" is "right", return this; otherwise,
+   * that
    * @param that another Either
    * @return this or that
    */
@@ -141,35 +141,30 @@ class Either {
    * @param left the value to inject into the Either
    * @return a left Either
    */
-  static Either<L, R> Left(const L left) {
-    return Either(false, left, R());
-  }
+  static Either<L, R> Left(const L left) { return Either(false, left, R()); }
 
   /**
    * Construct a "right" Either.
    * @param right the value to inject into the Either
    * @return a right Either
    */
-  static Either<L, R> Right(const R right) {
-    return Either(true, L(), right);
-  }
+  static Either<L, R> Right(const R right) { return Either(true, L(), right); }
 
- private:
-  Either(bool is_right, const L left, const R right): _is_right(is_right), _left(left), _right(right) {}
+private:
+  Either(bool is_right, const L left, const R right)
+      : _is_right(is_right), _left(left), _right(right) {}
 
   bool _is_right;
   L _left;
   R _right;
 };
 
-template <typename L, typename R>
-static Either<L, R> MakeRight(const R right) {
+template <typename L, typename R> static Either<L, R> MakeRight(const R right) {
   return Either<L, R>::Right(right);
 }
 
-template <typename R, typename L>
-static Either<L, R> MakeLeft(const L left) {
+template <typename R, typename L> static Either<L, R> MakeLeft(const L left) {
   return Either<L, R>::Left(left);
 }
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

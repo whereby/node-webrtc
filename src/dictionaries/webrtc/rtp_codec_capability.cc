@@ -22,17 +22,20 @@ TO_NAPI_IMPL(webrtc::RtpCodecCapability, pair) {
   Napi::EscapableHandleScope scope(env);
   auto capabilities = pair.second;
   NODE_WEBRTC_CREATE_OBJECT_OR_RETURN(env, object)
-  NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "mimeType", capabilities.mime_type())
+  NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "mimeType",
+                                        capabilities.mime_type())
   if (capabilities.clock_rate) {
-    NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "clockRate", *capabilities.clock_rate)
+    NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "clockRate",
+                                          *capabilities.clock_rate)
   }
   if (capabilities.num_channels) {
-    NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "channels", *capabilities.num_channels)
+    NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "channels",
+                                          *capabilities.num_channels)
   }
   if (!capabilities.parameters.empty()) {
     std::string fmtp;
     uint64_t i = 0;
-    for (const auto& param : capabilities.parameters) {
+    for (const auto &param : capabilities.parameters) {
       fmtp += param.first + "=" + param.second;
       if (i < capabilities.parameters.size() - 1) {
         fmtp += ";";
@@ -44,16 +47,16 @@ TO_NAPI_IMPL(webrtc::RtpCodecCapability, pair) {
   return Pure(scope.Escape(object));
 }
 
-static webrtc::RtpCodecCapability CreateRtpCodecCapability(
-    std::string const& mimeType,
-    uint64_t clockRate,
-    Maybe<uint8_t> channels,
-    Maybe<std::string> const& maybeSdpFmtpLine) {
+static webrtc::RtpCodecCapability
+CreateRtpCodecCapability(std::string const &mimeType, uint64_t clockRate,
+                         Maybe<uint8_t> channels,
+                         Maybe<std::string> const &maybeSdpFmtpLine) {
   webrtc::RtpCodecCapability result;
   auto indexOfSlash = mimeType.find('/');
   auto kindString = mimeType.substr(0, indexOfSlash);
   auto nameString = mimeType.substr(indexOfSlash + 1);
-  result.kind = kindString == "audio" ? cricket::MEDIA_TYPE_AUDIO : cricket::MEDIA_TYPE_VIDEO;
+  result.kind = kindString == "audio" ? cricket::MEDIA_TYPE_AUDIO
+                                      : cricket::MEDIA_TYPE_VIDEO;
   result.name = nameString;
   result.clock_rate = clockRate;
   if (channels.IsJust()) {
@@ -76,13 +79,14 @@ static webrtc::RtpCodecCapability CreateRtpCodecCapability(
 }
 
 FROM_NAPI_IMPL(webrtc::RtpCodecCapability, value) {
-  return From<Napi::Object>(value).FlatMap<webrtc::RtpCodecCapability>([](auto object) {
-    return curry(CreateRtpCodecCapability)
-        % GetRequired<std::string>(object, "mimeType")
-        * GetRequired<uint64_t>(object, "clockRate")
-        * GetOptional<uint8_t>(object, "channels")
-        * GetOptional<std::string>(object, "sdpFmtpLine");
-  });
+  return From<Napi::Object>(value).FlatMap<webrtc::RtpCodecCapability>(
+      [](auto object) {
+        return curry(CreateRtpCodecCapability) %
+               GetRequired<std::string>(object, "mimeType") *
+               GetRequired<uint64_t>(object, "clockRate") *
+               GetOptional<uint8_t>(object, "channels") *
+               GetOptional<std::string>(object, "sdpFmtpLine");
+      });
 }
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

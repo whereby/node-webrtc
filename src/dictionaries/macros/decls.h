@@ -7,6 +7,6 @@ namespace node_webrtc {
 
 DECLARE_TO_AND_FROM_NAPI(DICT())
 
-}  // namespace node_webrtc
+} // namespace node_webrtc
 
-#endif  // DICT
+#endif // DICT

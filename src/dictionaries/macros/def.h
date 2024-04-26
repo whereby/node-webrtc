@@ -16,6 +16,6 @@ struct DICT() {
 #undef DICT_OPTIONAL
 #undef DICT_DEFAULT
 
-}  // namespace webrtc
+} // namespace node_webrtc
 
-#endif  // DICT
+#endif // DICT

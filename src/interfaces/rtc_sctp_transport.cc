@@ -15,20 +15,26 @@
 
 namespace node_webrtc {
 
-Napi::FunctionReference& RTCSctpTransport::constructor() {
+Napi::FunctionReference &RTCSctpTransport::constructor() {
   static Napi::FunctionReference constructor;
   return constructor;
 }
 
-RTCSctpTransport::RTCSctpTransport(const Napi::CallbackInfo& info)
-  : AsyncObjectWrapWithLoop<RTCSctpTransport>("RTCSctpTransport", *this, info) {
+RTCSctpTransport::RTCSctpTransport(const Napi::CallbackInfo &info)
+    : AsyncObjectWrapWithLoop<RTCSctpTransport>("RTCSctpTransport", *this,
+                                                info) {
   if (info.Length() != 2 || !info[0].IsObject() || !info[1].IsExternal()) {
-    Napi::TypeError::New(info.Env(), "You cannot construct an RTCSctpTransport").ThrowAsJavaScriptException();
+    Napi::TypeError::New(info.Env(), "You cannot construct an RTCSctpTransport")
+        .ThrowAsJavaScriptException();
     return;
   }
 
   auto factory = PeerConnectionFactory::Unwrap(info[0].ToObject());
-  auto transport = *info[1].As<Napi::External<rtc::scoped_refptr<webrtc::SctpTransportInterface>>>().Data();
+  auto transport =
+      *info[1]
+           .As<Napi::External<
+               rtc::scoped_refptr<webrtc::SctpTransportInterface>>>()
+           .Data();
 
   _factory = factory;
   _factory->Ref();
@@ -40,7 +46,8 @@ RTCSctpTransport::RTCSctpTransport(const Napi::CallbackInfo& info)
     _transport->RegisterObserver(this);
   });
 
-  if (_transport->Information().state() == webrtc::SctpTransportState::kClosed) {
+  if (_transport->Information().state() ==
+      webrtc::SctpTransportState::kClosed) {
     // TODO(jack): figure out a way to not call this virtual method during
     // construction
     Stop(); // NOLINT
@@ -59,40 +66,38 @@ void RTCSctpTransport::Stop() {
   AsyncObjectWrapWithLoop<RTCSctpTransport>::Stop();
 }
 
-Wrap <
-RTCSctpTransport*,
-rtc::scoped_refptr<webrtc::SctpTransportInterface>,
-PeerConnectionFactory*
-> * RTCSctpTransport::wrap() {
-  static auto wrap = new node_webrtc::Wrap <
-  RTCSctpTransport*,
-  rtc::scoped_refptr<webrtc::SctpTransportInterface>,
-  PeerConnectionFactory*
-  > (RTCSctpTransport::Create);
+Wrap<RTCSctpTransport *, rtc::scoped_refptr<webrtc::SctpTransportInterface>,
+     PeerConnectionFactory *> *
+RTCSctpTransport::wrap() {
+  static auto wrap =
+      new node_webrtc::Wrap<RTCSctpTransport *,
+                            rtc::scoped_refptr<webrtc::SctpTransportInterface>,
+                            PeerConnectionFactory *>(RTCSctpTransport::Create);
   return wrap;
 }
 
-RTCSctpTransport* RTCSctpTransport::Create(
-    PeerConnectionFactory* factory,
+RTCSctpTransport *RTCSctpTransport::Create(
+    PeerConnectionFactory *factory,
     rtc::scoped_refptr<webrtc::SctpTransportInterface> transport) {
   auto env = constructor().Env();
   Napi::HandleScope scope(env);
 
-  auto object = constructor().New({
-    factory->Value(),
-    Napi::External<rtc::scoped_refptr<webrtc::SctpTransportInterface>>::New(env, &transport)
-  });
+  auto object = constructor().New(
+      {factory->Value(),
+       Napi::External<rtc::scoped_refptr<webrtc::SctpTransportInterface>>::New(
+           env, &transport)});
 
   return RTCSctpTransport::Unwrap(object);
 }
 
-void RTCSctpTransport::OnStateChange(const webrtc::SctpTransportInformation info) {
+void RTCSctpTransport::OnStateChange(
+    const webrtc::SctpTransportInformation info) {
   Dispatch(CreateCallback<RTCSctpTransport>([this]() {
     auto env = Env();
     Napi::HandleScope scope(env);
     auto event = Napi::Object::New(env);
     event.Set("type", Napi::String::New(env, "statechange"));
-    MakeCallback("dispatchEvent", { event });
+    MakeCallback("dispatchEvent", {event});
   }));
 
   if (info.state() == webrtc::SctpTransportState::kClosed) {
@@ -100,32 +105,41 @@ void RTCSctpTransport::OnStateChange(const webrtc::SctpTransportInformation info
   }
 }
 
-Napi::Value RTCSctpTransport::GetTransport(const Napi::CallbackInfo&) {
-  return RTCDtlsTransport::wrap()->GetOrCreate(_factory, _dtls_transport)->Value();
+Napi::Value RTCSctpTransport::GetTransport(const Napi::CallbackInfo &) {
+  return RTCDtlsTransport::wrap()
+      ->GetOrCreate(_factory, _dtls_transport)
+      ->Value();
 }
 
-Napi::Value RTCSctpTransport::GetState(const Napi::CallbackInfo& info) {
-  CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), _transport->Information().state(), result, Napi::Value)
+Napi::Value RTCSctpTransport::GetState(const Napi::CallbackInfo &info) {
+  CONVERT_OR_THROW_AND_RETURN_NAPI(
+      info.Env(), _transport->Information().state(), result, Napi::Value)
   return result;
 }
 
-Napi::Value RTCSctpTransport::GetMaxMessageSize(const Napi::CallbackInfo& info) {
-  CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), _transport->Information().MaxMessageSize(), result, Napi::Value)
+Napi::Value
+RTCSctpTransport::GetMaxMessageSize(const Napi::CallbackInfo &info) {
+  CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(),
+                                   _transport->Information().MaxMessageSize(),
+                                   result, Napi::Value)
   return result;
 }
 
-Napi::Value RTCSctpTransport::GetMaxChannels(const Napi::CallbackInfo& info) {
-  CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), _transport->Information().MaxChannels(), result, Napi::Value)
+Napi::Value RTCSctpTransport::GetMaxChannels(const Napi::CallbackInfo &info) {
+  CONVERT_OR_THROW_AND_RETURN_NAPI(
+      info.Env(), _transport->Information().MaxChannels(), result, Napi::Value)
   return result;
 }
 
 void RTCSctpTransport::Init(Napi::Env env, Napi::Object exports) {
-  auto func = DefineClass(env, "RTCSctpTransport", {
-    InstanceAccessor("transport", &RTCSctpTransport::GetTransport, nullptr),
-    InstanceAccessor("state", &RTCSctpTransport::GetState, nullptr),
-    InstanceAccessor("maxMessageSize", &RTCSctpTransport::GetMaxMessageSize, nullptr),
-    InstanceAccessor("maxChannels", &RTCSctpTransport::GetMaxChannels, nullptr)
-  });
+  auto func = DefineClass(
+      env, "RTCSctpTransport",
+      {InstanceAccessor("transport", &RTCSctpTransport::GetTransport, nullptr),
+       InstanceAccessor("state", &RTCSctpTransport::GetState, nullptr),
+       InstanceAccessor("maxMessageSize", &RTCSctpTransport::GetMaxMessageSize,
+                        nullptr),
+       InstanceAccessor("maxChannels", &RTCSctpTransport::GetMaxChannels,
+                        nullptr)});
 
   constructor() = Napi::Persistent(func);
   constructor().SuppressDestruct();
@@ -133,4 +147,4 @@ void RTCSctpTransport::Init(Napi::Env env, Napi::Object exports) {
   exports.Set("RTCSctpTransport", func);
 }
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

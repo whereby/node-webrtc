@@ -21,7 +21,7 @@
 namespace node_webrtc {
 
 class RTCAudioTrackSource : public webrtc::LocalAudioSource {
- public:
+public:
   RTCAudioTrackSource() {}
 
   ~RTCAudioTrackSource() override {
@@ -33,53 +33,43 @@ class RTCAudioTrackSource : public webrtc::LocalAudioSource {
     return webrtc::MediaSourceInterface::SourceState::kLive;
   }
 
-  bool remote() const override {
-    return false;
-  }
+  bool remote() const override { return false; }
 
   void PushData(RTCOnDataEventDict dict) {
-    webrtc::AudioTrackSinkInterface* sink = _sink;
+    webrtc::AudioTrackSinkInterface *sink = _sink;
     if (sink && dict.numberOfFrames.IsJust()) {
-      sink->OnData(
-          dict.samples,
-          dict.bitsPerSample,
-          dict.sampleRate,
-          dict.channelCount,
-          dict.numberOfFrames.UnsafeFromJust()
-      );
+      sink->OnData(dict.samples, dict.bitsPerSample, dict.sampleRate,
+                   dict.channelCount, dict.numberOfFrames.UnsafeFromJust());
     }
     // HACK(mroberts): I'd rather we use a smart pointer.
     delete[] dict.samples;
   }
 
-  void AddSink(webrtc::AudioTrackSinkInterface* sink) override {
-    _sink = sink;
-  }
+  void AddSink(webrtc::AudioTrackSinkInterface *sink) override { _sink = sink; }
 
-  void RemoveSink(webrtc::AudioTrackSinkInterface*) override {
+  void RemoveSink(webrtc::AudioTrackSinkInterface *) override {
     _sink = nullptr;
   }
 
- private:
-  PeerConnectionFactory* _factory = PeerConnectionFactory::GetOrCreateDefault();
+private:
+  PeerConnectionFactory *_factory = PeerConnectionFactory::GetOrCreateDefault();
 
-  std::atomic<webrtc::AudioTrackSinkInterface*> _sink = {nullptr};
+  std::atomic<webrtc::AudioTrackSinkInterface *> _sink = {nullptr};
 };
 
-class RTCAudioSource
-  : public Napi::ObjectWrap<RTCAudioSource> {
- public:
-  RTCAudioSource(const Napi::CallbackInfo&);
+class RTCAudioSource : public Napi::ObjectWrap<RTCAudioSource> {
+public:
+  RTCAudioSource(const Napi::CallbackInfo &);
 
   static void Init(Napi::Env, Napi::Object);
 
- private:
-  static Napi::FunctionReference& constructor();
+private:
+  static Napi::FunctionReference &constructor();
 
-  Napi::Value CreateTrack(const Napi::CallbackInfo&);
-  Napi::Value OnData(const Napi::CallbackInfo&);
+  Napi::Value CreateTrack(const Napi::CallbackInfo &);
+  Napi::Value OnData(const Napi::CallbackInfo &);
 
   rtc::scoped_refptr<RTCAudioTrackSource> _source;
 };
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

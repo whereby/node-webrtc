@@ -2,10 +2,12 @@
 
 #include "src/converters/napi.h"
 
-namespace webrtc { struct RtpHeaderExtensionCapability; }
+namespace webrtc {
+struct RtpHeaderExtensionCapability;
+}
 
 namespace node_webrtc {
 
 DECLARE_TO_NAPI(webrtc::RtpHeaderExtensionCapability)
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

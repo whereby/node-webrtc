@@ -2,11 +2,13 @@
 
 #include "src/converters/napi.h"
 
-namespace webrtc { class RTCError; }
+namespace webrtc {
+class RTCError;
+}
 
 namespace node_webrtc {
 
-DECLARE_TO_NAPI(webrtc::RTCError*)
-DECLARE_TO_NAPI(const webrtc::RTCError*)
+DECLARE_TO_NAPI(webrtc::RTCError *)
+DECLARE_TO_NAPI(const webrtc::RTCError *)
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

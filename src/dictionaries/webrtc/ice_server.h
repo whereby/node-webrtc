@@ -4,6 +4,6 @@
 
 #define ICE_SERVER webrtc::PeerConnectionInterface::IceServer
 
-#define DICT(X) ICE_SERVER ## X
+#define DICT(X) ICE_SERVER##X
 #include "src/dictionaries/macros/decls.h"
 #undef DICT

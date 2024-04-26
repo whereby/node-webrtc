@@ -12,8 +12,8 @@
 namespace node_webrtc {
 
 class GetDisplayMedia {
- public:
+public:
   static void Init(Napi::Env, Napi::Object);
 };
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

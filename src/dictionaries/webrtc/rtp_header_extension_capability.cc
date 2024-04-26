@@ -19,4 +19,4 @@ TO_NAPI_IMPL(webrtc::RtpHeaderExtensionCapability, pair) {
   return Pure(scope.Escape(object));
 }
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

@@ -13,4 +13,4 @@ TO_NAPI_IMPL(Undefined, pair) {
   return Pure(scope.Escape(pair.first.Undefined()));
 }
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

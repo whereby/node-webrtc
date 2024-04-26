@@ -2,10 +2,12 @@
 
 #include "src/converters/napi.h"
 
-namespace webrtc { class RtpSource; }
+namespace webrtc {
+class RtpSource;
+}
 
 namespace node_webrtc {
 
 DECLARE_TO_NAPI(webrtc::RtpSource)
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

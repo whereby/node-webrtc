@@ -27,10 +27,9 @@ namespace node_webrtc {
  * @param I the input type
  * @param O the output type
  */
-#define DECLARE_CONVERTER(I, O) \
-  template <> \
-  struct Converter<I, O> { \
-    static Validation<O> Convert(I const&); \
+#define DECLARE_CONVERTER(I, O)                                                \
+  template <> struct Converter<I, O> {                                         \
+    static Validation<O> Convert(I const &);                                   \
   };
 
 /**
@@ -40,10 +39,12 @@ namespace node_webrtc {
  * @param O the output type
  * @param V the name of the input variable to convert
  */
-#define CONVERTER_IMPL(I, O, V) Validation<O> Converter<I, O>::Convert(I const& V)
+#define CONVERTER_IMPL(I, O, V)                                                \
+  Validation<O> Converter<I, O>::Convert(I const &V)
 
 /**
- * This macro defines a node_webrtc::Converter from I to O when node_webrtc::Converter instances from
+ * This macro defines a node_webrtc::Converter from I to O when
+ * node_webrtc::Converter instances from
  *
  * 1. I to M, and
  * 2. M to O
@@ -54,9 +55,10 @@ namespace node_webrtc {
  * @param M the intermediate type
  * @param O the output type
  */
-#define CONVERT_VIA(I, M, O) \
-  CONVERTER_IMPL(I, O, value) { \
-    return Converter<I, M>::Convert(value).FlatMap<O>(Converter<M, O>::Convert); \
+#define CONVERT_VIA(I, M, O)                                                   \
+  CONVERTER_IMPL(I, O, value) {                                                \
+    return Converter<I, M>::Convert(value).FlatMap<O>(                         \
+        Converter<M, O>::Convert);                                             \
   }
 
 /**
@@ -65,8 +67,7 @@ namespace node_webrtc {
  * @tparam S the source type
  * @tparam T the target type
  */
-template <typename S, typename T>
-struct Converter {};
+template <typename S, typename T> struct Converter {};
 
 /**
  * From is short-hand for invoking a particular Converter.
@@ -75,8 +76,7 @@ struct Converter {};
  * @param s the source value
  * @return the target value
  */
-template <typename T, typename S>
-static Validation<T> From(S const& s) {
+template <typename T, typename S> static Validation<T> From(S const &s) {
   return Converter<S, T>::Convert(s);
 }
 
@@ -84,11 +84,8 @@ static Validation<T> From(S const& s) {
  * There is an "identity" Converter between values of the same type T.
  * @tparam T the source and target type
  */
-template <typename T>
-struct Converter<T, T> {
-  static Validation<T> Convert(T const& t) {
-    return Validation<T>(t);
-  }
+template <typename T> struct Converter<T, T> {
+  static Validation<T> Convert(T const &t) { return Validation<T>(t); }
 };
 
 /**
@@ -99,17 +96,15 @@ struct Converter<T, T> {
  */
 template <typename S, typename L, typename R>
 struct Converter<S, Either<L, R>> {
-  static Validation<Either<L, R>> Convert(S const& s) {
-    return From<L>(s).Map(&MakeLeft<R, L>)
-        | (From<R>(s).Map(&MakeRight<L, R>));
+  static Validation<Either<L, R>> Convert(S const &s) {
+    return From<L>(s).Map(&MakeLeft<R, L>) | (From<R>(s).Map(&MakeRight<L, R>));
   }
 };
 
-template <typename T>
-struct Converter<T*, std::shared_ptr<T>> {
-  static Validation<std::shared_ptr<T>> Convert(T* const& t) {
+template <typename T> struct Converter<T *, std::shared_ptr<T>> {
+  static Validation<std::shared_ptr<T>> Convert(T *const &t) {
     return Validation<std::shared_ptr<T>>(std::shared_ptr<T>(t));
   }
 };
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

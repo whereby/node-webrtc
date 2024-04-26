@@ -14,8 +14,10 @@
 #include "src/converters/napi.h"
 #include "src/dictionaries/node_webrtc/some_error.h"
 
-void node_webrtc::CreateSessionDescriptionObserver::OnSuccess(webrtc::SessionDescriptionInterface* description) {
-  auto maybeDescription = node_webrtc::From<RTCSessionDescriptionInit>(description);
+void node_webrtc::CreateSessionDescriptionObserver::OnSuccess(
+    webrtc::SessionDescriptionInterface *description) {
+  auto maybeDescription =
+      node_webrtc::From<RTCSessionDescriptionInit>(description);
   delete description;
   if (maybeDescription.IsInvalid()) {
     Reject(node_webrtc::SomeError(maybeDescription.ToErrors()[0]));
@@ -26,8 +28,8 @@ void node_webrtc::CreateSessionDescriptionObserver::OnSuccess(webrtc::SessionDes
   }
 }
 
-void node_webrtc::CreateSessionDescriptionObserver::OnFailure(webrtc::RTCError error) {
-  Reject(node_webrtc::From<node_webrtc::SomeError>(&error).FromValidation([](auto errors) {
-    return node_webrtc::SomeError(errors[0]);
-  }));
+void node_webrtc::CreateSessionDescriptionObserver::OnFailure(
+    webrtc::RTCError error) {
+  Reject(node_webrtc::From<node_webrtc::SomeError>(&error).FromValidation(
+      [](auto errors) { return node_webrtc::SomeError(errors[0]); }));
 }

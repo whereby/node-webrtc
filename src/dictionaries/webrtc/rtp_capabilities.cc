@@ -24,9 +24,11 @@ TO_NAPI_IMPL(webrtc::RtpCapabilities, pair) {
   Napi::EscapableHandleScope scope(env);
   auto capabilities = pair.second;
   NODE_WEBRTC_CREATE_OBJECT_OR_RETURN(env, object)
-  NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "codecs", capabilities.codecs)
-  NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "headerExtensions", capabilities.header_extensions)
+  NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "codecs",
+                                        capabilities.codecs)
+  NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "headerExtensions",
+                                        capabilities.header_extensions)
   return Pure(scope.Escape(object));
 }
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

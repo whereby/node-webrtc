@@ -9,28 +9,26 @@
 
 namespace node_webrtc {
 
-class AsyncContextReleaser
-  : public Napi::ObjectWrap<AsyncContextReleaser>
-  , private Deferrer {
- public:
-  AsyncContextReleaser(const Napi::CallbackInfo& info)
-    : Napi::ObjectWrap<AsyncContextReleaser>(info)
-    , Deferrer(info.Env()) {}
+class AsyncContextReleaser : public Napi::ObjectWrap<AsyncContextReleaser>,
+                             private Deferrer {
+public:
+  AsyncContextReleaser(const Napi::CallbackInfo &info)
+      : Napi::ObjectWrap<AsyncContextReleaser>(info), Deferrer(info.Env()) {}
 
-  static AsyncContextReleaser* GetDefault();
+  static AsyncContextReleaser *GetDefault();
   static void Init(Napi::Env, Napi::Object);
 
-  void Release(Napi::AsyncContext*);
+  void Release(Napi::AsyncContext *);
 
- protected:
+protected:
   void Execute(Napi::Env);
 
- private:
-  static AsyncContextReleaser* _default;
-  static Napi::FunctionReference& constructor();
+private:
+  static AsyncContextReleaser *_default;
+  static Napi::FunctionReference &constructor();
 
-  std::queue<Napi::AsyncContext*> _contexts;
+  std::queue<Napi::AsyncContext *> _contexts;
   std::mutex _contexts_mutex{};
 };
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

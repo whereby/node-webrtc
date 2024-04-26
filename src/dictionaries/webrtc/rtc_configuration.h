@@ -7,13 +7,14 @@
 
 namespace node_webrtc {
 
-static inline webrtc::PeerConnectionInterface::RTCConfiguration CreateRTCConfiguration(
-    const std::vector<webrtc::PeerConnectionInterface::IceServer>& iceServers,
-    const webrtc::PeerConnectionInterface::IceTransportsType iceTransportsPolicy,
+static inline webrtc::PeerConnectionInterface::RTCConfiguration
+CreateRTCConfiguration(
+    const std::vector<webrtc::PeerConnectionInterface::IceServer> &iceServers,
+    const webrtc::PeerConnectionInterface::IceTransportsType
+        iceTransportsPolicy,
     const webrtc::PeerConnectionInterface::BundlePolicy bundlePolicy,
     const webrtc::PeerConnectionInterface::RtcpMuxPolicy rtcpMuxPolicy,
-    const Maybe<std::string>&,
-    const Maybe<std::vector<Napi::Object>>&,
+    const Maybe<std::string> &, const Maybe<std::vector<Napi::Object>> &,
     const uint32_t iceCandidatePoolSize,
     const webrtc::SdpSemantics sdpSemantics) {
   webrtc::PeerConnectionInterface::RTCConfiguration configuration;
@@ -28,4 +29,4 @@ static inline webrtc::PeerConnectionInterface::RTCConfiguration CreateRTCConfigu
 
 DECLARE_FROM_NAPI(webrtc::PeerConnectionInterface::RTCConfiguration)
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

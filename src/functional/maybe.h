@@ -23,19 +23,18 @@ namespace node_webrtc {
  * Maybe represents an optional value.
  * @tparam T the value type
  */
-template <typename T>
-class Maybe {
- public:
+template <typename T> class Maybe {
+public:
   /**
    * Construct an empty Maybe.
    */
-  Maybe(): _is_just(false), _value(T()) {}
+  Maybe() : _is_just(false), _value(T()) {}
 
   /**
    * Construct a non-empty Maybe.
    * @param value the value to inject into the Maybe
    */
-  explicit Maybe(const T& value): _is_just(true), _value(value) {}
+  explicit Maybe(const T &value) : _is_just(true), _value(value) {}
 
   /**
    * Maybe forms an applicative. Apply a Maybe.
@@ -46,8 +45,9 @@ class Maybe {
   template <typename F>
   Maybe<typename std::result_of<F(T)>::type> Apply(const Maybe<F> f) const {
     return f.IsJust() && _is_just
-        ? Maybe<typename std::result_of<F(T)>::type>::Just(f.UnsafeFromJust()(_value))
-        : Maybe<typename std::result_of<F(T)>::type>::Nothing();
+               ? Maybe<typename std::result_of<F(T)>::type>::Just(
+                     f.UnsafeFromJust()(_value))
+               : Maybe<typename std::result_of<F(T)>::type>::Nothing();
   }
 
   /**
@@ -56,8 +56,7 @@ class Maybe {
    * @param f a function from T to a Maybe of S
    * @return a Maybe of S
    */
-  template <typename S>
-  Maybe<S> FlatMap(std::function<Maybe<S>(T)> f) const {
+  template <typename S> Maybe<S> FlatMap(std::function<Maybe<S>(T)> f) const {
     return _is_just ? f(_value) : Maybe<S>::Nothing();
   }
 
@@ -75,17 +74,13 @@ class Maybe {
    * Check whether or not the Maybe is non-empty.
    * @return true if the Maybe is non-empty; otherwise, false
    */
-  bool IsJust() const {
-    return _is_just;
-  }
+  bool IsJust() const { return _is_just; }
 
   /**
    * Check whether or not the Maybe is empty.
    * @return true if the Maybe is empty; otherwise, false
    */
-  bool IsNothing() const {
-    return !_is_just;
-  }
+  bool IsNothing() const { return !_is_just; }
 
   /**
    * Maybe forms a functor. Map a function over Maybe.
@@ -96,18 +91,17 @@ class Maybe {
   template <typename F>
   Maybe<typename std::result_of<F(T)>::type> Map(F f) const {
     return _is_just
-        ? Maybe<typename std::result_of<F(T)>::type>::Just(f(_value))
-        : Maybe<typename std::result_of<F(T)>::type>::Nothing();
+               ? Maybe<typename std::result_of<F(T)>::type>::Just(f(_value))
+               : Maybe<typename std::result_of<F(T)>::type>::Nothing();
   }
 
   /**
-   * Maybe forms an alternative. If "this" is non-empty, return this; otherwise, that
+   * Maybe forms an alternative. If "this" is non-empty, return this; otherwise,
+   * that
    * @param that another Maybe
    * @return this or that
    */
-  Maybe<T> Or(const Maybe<T>& that) const {
-    return _is_just ? this : that;
-  }
+  Maybe<T> Or(const Maybe<T> &that) const { return _is_just ? this : that; }
 
   /**
    * If "this" contains a value, return it; otherwise, compute a value and
@@ -132,32 +126,26 @@ class Maybe {
    * Construct an empty Maybe.
    * @return an empty Maybe
    */
-  static Maybe<T> Nothing() {
-    return Maybe();
-  }
+  static Maybe<T> Nothing() { return Maybe(); }
 
   /**
    * Construct a non-empty Maybe.
    * @param value the value present in the Maybe
    * @return a non-empty Maybe
    */
-  static Maybe<T> Just(const T& value) {
-    return Maybe(value);
-  }
+  static Maybe<T> Just(const T &value) { return Maybe(value); }
 
- private:
+private:
   bool _is_just;
   T _value;
 };
 
-template <typename T>
-static Maybe<T> MakeJust(const T& t) {
+template <typename T> static Maybe<T> MakeJust(const T &t) {
   return Maybe<T>::Just(t);
 }
 
-template <typename T>
-static Maybe<T> MakeNothing() {
+template <typename T> static Maybe<T> MakeNothing() {
   return Maybe<T>::Nothing();
 }
 
-}  // namespace node_webrtc
+} // namespace node_webrtc

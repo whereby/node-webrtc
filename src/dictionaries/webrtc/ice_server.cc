@@ -21,20 +21,23 @@ using stringOrCredential = Either<std::string, RTCOAuthCredential>;
 using stringOrStrings = Either<std::vector<std::string>, std::string>;
 
 #define ICE_SERVER_FN CreateIceServer
-#define ICE_SERVER_LIST \
-  DICT_REQUIRED(stringOrStrings, urls, "urls") \
-  DICT_DEFAULT(std::string, username, "username", "") \
-  DICT_DEFAULT(stringOrCredential, credential, "credential", MakeLeft<RTCOAuthCredential>(std::string(""))) \
-  DICT_DEFAULT(RTCIceCredentialType, credentialType, "credentialType", RTCIceCredentialType::kPassword)
+#define ICE_SERVER_LIST                                                        \
+  DICT_REQUIRED(stringOrStrings, urls, "urls")                                 \
+  DICT_DEFAULT(std::string, username, "username", "")                          \
+  DICT_DEFAULT(stringOrCredential, credential, "credential",                   \
+               MakeLeft<RTCOAuthCredential>(std::string("")))                  \
+  DICT_DEFAULT(RTCIceCredentialType, credentialType, "credentialType",         \
+               RTCIceCredentialType::kPassword)
 
-
-static Validation<webrtc::PeerConnectionInterface::IceServer> ICE_SERVER_FN(
-    const Either<std::vector<std::string>, std::string>& urlsOrUrl,
-    const std::string& username,
-    const Either<std::string, RTCOAuthCredential>& credential,
-    const RTCIceCredentialType credentialType) {
-  if (credential.IsRight() || credentialType != RTCIceCredentialType::kPassword) {
-    return Validation<webrtc::PeerConnectionInterface::IceServer>::Invalid("OAuth is not currently supported");
+static Validation<webrtc::PeerConnectionInterface::IceServer>
+ICE_SERVER_FN(const Either<std::vector<std::string>, std::string> &urlsOrUrl,
+              const std::string &username,
+              const Either<std::string, RTCOAuthCredential> &credential,
+              const RTCIceCredentialType credentialType) {
+  if (credential.IsRight() ||
+      credentialType != RTCIceCredentialType::kPassword) {
+    return Validation<webrtc::PeerConnectionInterface::IceServer>::Invalid(
+        "OAuth is not currently supported");
   }
   webrtc::PeerConnectionInterface::IceServer iceServer;
   iceServer.urls = urlsOrUrl.FromLeft(std::vector<std::string>());
@@ -57,18 +60,21 @@ TO_NAPI_IMPL(webrtc::PeerConnectionInterface::IceServer, pair) {
     NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "urls", iceServer.urls)
   }
   if (!iceServer.username.empty()) {
-    NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "username", iceServer.username)
+    NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "username",
+                                          iceServer.username)
   }
   if (!iceServer.password.empty()) {
-    NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "credential", iceServer.password)
-    NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "credentialType", RTCIceCredentialType::kPassword)
+    NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "credential",
+                                          iceServer.password)
+    NODE_WEBRTC_CONVERT_AND_SET_OR_RETURN(env, object, "credentialType",
+                                          RTCIceCredentialType::kPassword)
   }
 
   return Pure(scope.Escape(object));
 }
 
-}  // namespace node_webrtc
+} // namespace node_webrtc
 
-#define DICT(X) ICE_SERVER ## X
+#define DICT(X) ICE_SERVER##X
 #include "src/dictionaries/macros/impls.h"
 #undef DICT

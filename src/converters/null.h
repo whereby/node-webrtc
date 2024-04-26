@@ -5,10 +5,10 @@
 namespace node_webrtc {
 
 class Null {
- public:
+public:
   Null() = default;
 };
 
 DECLARE_FROM_NAPI(Null)
 
-}  // namespace node_webrtc
+} // namespace node_webrtc
