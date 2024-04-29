@@ -9,6 +9,7 @@
   ENUM_SUPPORTED(kOAuth, "oauth")
 
 #define ENUM(X) RTC_ICE_CREDENTIAL_TYPE##X
-#include "src/enums/macros/decls.h"
 #include "src/enums/macros/def.h"
+// ordering
+#include "src/enums/macros/decls.h"
 #undef ENUM

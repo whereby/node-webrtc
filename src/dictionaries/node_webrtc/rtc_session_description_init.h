@@ -19,8 +19,9 @@ class SessionDescriptionInterface;
   DICT_DEFAULT(std::string, sdp, "sdp", "")
 
 #define DICT(X) RTC_SESSION_DESCRIPTION_INIT##X
-#include "src/dictionaries/macros/decls.h"
 #include "src/dictionaries/macros/def.h"
+// ordering
+#include "src/dictionaries/macros/decls.h"
 #undef DICT
 
 namespace node_webrtc {

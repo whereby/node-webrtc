@@ -12,6 +12,7 @@
   DICT_REQUIRED(std::string, accessToken, "accessToken")
 
 #define DICT(X) RTC_OAUTH_CREDENTIAL##X
-#include "src/dictionaries/macros/decls.h"
 #include "src/dictionaries/macros/def.h"
+// ordering
+#include "src/dictionaries/macros/decls.h"
 #undef DICT

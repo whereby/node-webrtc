@@ -22,8 +22,9 @@
   DICT_REQUIRED(double, volume, "volume")
 
 #define DICT(X) AUDIO_MEDIA_TRACK_SETTINGS##X
-#include "src/dictionaries/macros/decls.h"
 #include "src/dictionaries/macros/def.h"
+// ordering
+#include "src/dictionaries/macros/decls.h"
 #undef DICT
 
 #define VIDEO_MEDIA_TRACK_SETTINGS VideoMediaTrackSettings
@@ -38,6 +39,7 @@
 // FIXME(jack): especially here, where this should really be an enum instead
 
 #define DICT(X) VIDEO_MEDIA_TRACK_SETTINGS##X
-#include "src/dictionaries/macros/decls.h"
 #include "src/dictionaries/macros/def.h"
+// ordering
+#include "src/dictionaries/macros/decls.h"
 #undef DICT

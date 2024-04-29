@@ -11,6 +11,7 @@
   ENUM_SUPPORTED(kPrflx, "prflx")
 
 #define ENUM(X) RTC_ICE_CANDIDATE_TYPE##X
-#include "src/enums/macros/decls.h"
 #include "src/enums/macros/def.h"
+// ordering
+#include "src/enums/macros/decls.h"
 #undef ENUM

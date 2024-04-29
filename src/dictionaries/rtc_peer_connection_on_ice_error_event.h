@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 // IWYU pragma: no_forward_declare node_webrtc::RTCPeerConnectionIceErrorEvent
 
@@ -12,6 +13,7 @@
   DICT_REQUIRED(std::string, errorText, "errorText")
 
 #define DICT(X) RTC_PEER_CONNECTION_ICE_ERROR_EVENT##X
-#include "src/dictionaries/macros/decls.h"
 #include "src/dictionaries/macros/def.h"
+// ordering
+#include "src/dictionaries/macros/decls.h"
 #undef DICT

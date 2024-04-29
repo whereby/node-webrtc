@@ -13,6 +13,7 @@
   DICT_OPTIONAL(uint16_t, numberOfFrames, "numberOfFrames")
 
 #define DICT(X) RTC_ON_DATA_EVENT_DICT##X
-#include "src/dictionaries/macros/decls.h"
 #include "src/dictionaries/macros/def.h"
+// ordering
+#include "src/dictionaries/macros/decls.h"
 #undef DICT

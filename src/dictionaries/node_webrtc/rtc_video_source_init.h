@@ -9,6 +9,7 @@
   DICT_OPTIONAL(bool, needsDenoising, "needsDenoising")
 
 #define DICT(X) RTC_VIDEO_SOURCE_INIT##X
-#include "src/dictionaries/macros/decls.h"
 #include "src/dictionaries/macros/def.h"
+// ordering
+#include "src/dictionaries/macros/decls.h"
 #undef DICT

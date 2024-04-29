@@ -11,6 +11,7 @@
   DICT_OPTIONAL(uint16_t, max, "max")
 
 #define DICT(X) UNSIGNED_SHORT_RANGE##X
-#include "src/dictionaries/macros/decls.h"
 #include "src/dictionaries/macros/def.h"
+// ordering
+#include "src/dictionaries/macros/decls.h"
 #undef DICT

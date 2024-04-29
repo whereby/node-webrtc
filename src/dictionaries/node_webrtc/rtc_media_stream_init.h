@@ -10,6 +10,7 @@
 #define RTC_MEDIA_STREAM_INIT_LIST DICT_REQUIRED(std::string, id, "id")
 
 #define DICT(X) RTC_MEDIA_STREAM_INIT##X
-#include "src/dictionaries/macros/decls.h"
 #include "src/dictionaries/macros/def.h"
+// ordering
+#include "src/dictionaries/macros/decls.h"
 #undef DICT

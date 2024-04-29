@@ -12,6 +12,7 @@
   DICT_OPTIONAL(std::string, value, "value")
 
 #define DICT(X) RTC_DTLS_FINGERPRINT##X
-#include "src/dictionaries/macros/decls.h"
 #include "src/dictionaries/macros/def.h"
+// ordering
+#include "src/dictionaries/macros/decls.h"
 #undef DICT

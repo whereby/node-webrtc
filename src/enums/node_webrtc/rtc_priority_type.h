@@ -11,6 +11,7 @@
   ENUM_SUPPORTED(kHigh, "high")
 
 #define ENUM(X) RTC_PRIORITY_TYPE##X
-#include "src/enums/macros/decls.h"
 #include "src/enums/macros/def.h"
+// ordering
+#include "src/enums/macros/decls.h"
 #undef ENUM
