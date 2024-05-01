@@ -1,3 +1,11 @@
+0.8.0
+======
+
+New Features
+------------
+
+- Update libwebrtc to M98!
+
 0.7.3
 =====
 
