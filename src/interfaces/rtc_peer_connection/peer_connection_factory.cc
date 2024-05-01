@@ -107,12 +107,12 @@ PeerConnectionFactory::PeerConnectionFactory(const Napi::CallbackInfo &info)
   options.network_ignore_mask = 0;
   _factory->SetOptions(options);
 
-  _networkManager =
-      std::unique_ptr<rtc::NetworkManager>(new rtc::BasicNetworkManager());
+  _networkManager = std::unique_ptr<rtc::NetworkManager>(
+      new rtc::BasicNetworkManager(_workerThread->socketserver()));
   assert(_networkManager != nullptr);
 
   _socketFactory = std::unique_ptr<rtc::PacketSocketFactory>(
-      new rtc::BasicPacketSocketFactory(_workerThread.get()));
+      new rtc::BasicPacketSocketFactory(_workerThread->socketserver()));
   assert(_socketFactory != nullptr);
 }
 
