@@ -6,7 +6,7 @@
 [![NPM](https://img.shields.io/npm/v/@roamhq/wrtc.svg)](https://www.npmjs.com/package/@roamhq/wrtc)
 
 node-webrtc is a Node.js Native Addon that provides bindings to [WebRTC
-M94](https://webrtc.googlesource.com/src/+/branch-heads/4606). This project is
+M98](https://webrtc.googlesource.com/src/+/branch-heads/4758). This project is
 aiming for spec-compliance and will eventually be tested using the W3C's
 [web-platform-tests](https://github.com/web-platform-tests/wpt) project. A
 number of [nonstandard APIs](docs/nonstandard-apis.md) for testing are also
