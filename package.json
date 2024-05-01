@@ -29,12 +29,12 @@
     "@roamhq/wrtc-darwin-x64": "0.7.3",
     "@roamhq/wrtc-linux-arm64": "0.8.0",
     "@roamhq/wrtc-linux-x64": "0.8.0",
-    "@roamhq/wrtc-win32-x64": "0.7.3",
+    "@roamhq/wrtc-win32-x64": "0.8.0",
     "domexception": "^4.0.0"
   },
   "devDependencies": {
     "@fidm/x509": "^1.2.1",
-    "cmake-js": "^7.2.1",
+    "cmake-js": "^7.3.0",
     "cross-env": "^5.1.4",
     "eslint": "^4.14.0",
     "node-addon-api": "^7.0.0",
