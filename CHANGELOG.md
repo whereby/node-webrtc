@@ -5,6 +5,14 @@ New Features
 ------------
 
 - Update libwebrtc to M98!
+- Compile linux-x64 with GCC 10 in order to support stabler Linux distributions
+  like Amazon Linux 2023.
+
+Bug Fixes
+---------
+
+- Changed binary path resolution to make things more consistent on environments
+  that don't automatically resolve `node_modules`, like Amazon Linux 2023.
 
 0.7.3
 =====
