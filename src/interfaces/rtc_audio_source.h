@@ -27,6 +27,7 @@ public:
   ~RTCAudioTrackSource() override {
     PeerConnectionFactory::Release();
     _factory = nullptr;
+    _sinks.clear();
   }
 
   SourceState state() const override {
@@ -36,25 +37,33 @@ public:
   bool remote() const override { return false; }
 
   void PushData(RTCOnDataEventDict dict) {
-    webrtc::AudioTrackSinkInterface *sink = _sink;
-    if (sink && dict.numberOfFrames.IsJust()) {
-      sink->OnData(dict.samples, dict.bitsPerSample, dict.sampleRate,
+    if (dict.numberOfFrames.IsJust()) {
+      for (auto sink : _sinks) {
+        sink->OnData(dict.samples, dict.bitsPerSample, dict.sampleRate,
                    dict.channelCount, dict.numberOfFrames.UnsafeFromJust());
+      }
     }
+    
     // HACK(mroberts): I'd rather we use a smart pointer.
     delete[] dict.samples;
   }
 
-  void AddSink(webrtc::AudioTrackSinkInterface *sink) override { _sink = sink; }
+  void AddSink(webrtc::AudioTrackSinkInterface *sink) override { 
+    _sinks.push_back(sink);
+  }
 
-  void RemoveSink(webrtc::AudioTrackSinkInterface *) override {
-    _sink = nullptr;
+  void RemoveSink(webrtc::AudioTrackSinkInterface *sink) override {
+    auto it = std::find(_sinks.begin(), _sinks.end(), sink);
+
+    if (it != _sinks.end()) {
+        _sinks.erase(it);
+    }
   }
 
 private:
   PeerConnectionFactory *_factory = PeerConnectionFactory::GetOrCreateDefault();
 
-  std::atomic<webrtc::AudioTrackSinkInterface *> _sink = {nullptr};
+  std::vector<webrtc::AudioTrackSinkInterface *> _sinks;
 };
 
 class RTCAudioSource : public Napi::ObjectWrap<RTCAudioSource> {
