@@ -160,6 +160,7 @@ list(APPEND GN_GEN_ARGS
   rtc_include_pulse_audio=false
   rtc_include_tests=false
   use_lld=false
+  "target_cpu=\"${TARGET_ARCH}\""
 )
 
 if (${use_custom_libcxx})
@@ -172,14 +173,8 @@ else()
   )
 endif()
 
-if (${is_arm32})
+if (${is_arm32} OR ${is_arm64})
   list(APPEND GN_GEN_ARGS
-    target_cpu="arm"
-    rtc_build_tools=true
-  )
-elseif (${is_arm64})
-  list(APPEND GN_GEN_ARGS
-    target_cpu="arm64"
     rtc_build_tools=true
   )
 else()
