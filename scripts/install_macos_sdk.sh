@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 
 GIT_ROOT="$(git rev-parse --show-toplevel)"
-xcodes install "$(cat "${GIT_ROOT}/.xcode-version")"
+XCODE_VERSION="$(cat "${GIT_ROOT}/.xcode-version")"
+xcodes install "${XCODE_VERSION}"
+xcodes select "${XCODE_VERSION}"
