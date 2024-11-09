@@ -15,7 +15,7 @@
 
 #include <functional>
 
-namespace _dtl { // NOLINT(bugprone-reserved-identifier)
+namespace {
 
 template <typename FUNCTION> struct _curry;
 
@@ -45,16 +45,16 @@ struct _curry<std::function<R(T, Ts...)>> {
         }) {}
 };
 
-} // namespace _dtl
+} // namespace
 
 template <typename R, typename... Ts>
 auto curry(const std::function<R(Ts...)> &fun) ->
-    typename _dtl::_curry<std::function<R(Ts...)>>::type {
-  return _dtl::_curry<std::function<R(Ts...)>>(fun).result;
+    typename _curry<std::function<R(Ts...)>>::type {
+  return _curry<std::function<R(Ts...)>>(fun).result;
 }
 
 template <typename R, typename... Ts>
 auto curry(R (*const fun)(Ts...)) ->
-    typename _dtl::_curry<std::function<R(Ts...)>>::type {
-  return _dtl::_curry<std::function<R(Ts...)>>(fun).result;
+    typename _curry<std::function<R(Ts...)>>::type {
+  return _curry<std::function<R(Ts...)>>(fun).result;
 }

@@ -7,8 +7,6 @@
  */
 #include "src/interfaces/rtc_peer_connection.h"
 
-#include <iosfwd>
-
 #include <webrtc/api/media_types.h>
 #include <webrtc/api/peer_connection_interface.h>
 #include <webrtc/api/rtc_error.h>
@@ -17,9 +15,9 @@
 #include <webrtc/p2p/client/basic_port_allocator.h>
 
 #include "src/converters.h"
-#include "src/converters/absl.h"
+#include "src/converters/absl.h" // IWYU pragma: keep. Needed for conversions
 #include "src/converters/arguments.h"
-#include "src/converters/interfaces.h"
+#include "src/converters/interfaces.h" // IWYU pragma: keep. Needed for conversions.
 #include "src/converters/napi.h"
 #include "src/dictionaries/macros/napi.h"
 #include "src/dictionaries/node_webrtc/rtc_answer_options.h"
@@ -28,14 +26,14 @@
 #include "src/dictionaries/node_webrtc/some_error.h"
 #include "src/dictionaries/webrtc/data_channel_init.h"
 #include "src/dictionaries/webrtc/ice_candidate_interface.h"
-#include "src/dictionaries/webrtc/rtc_configuration.h"
+#include "src/dictionaries/webrtc/rtc_configuration.h" // IWYU pragma: keep. Needed for conversions.
 #include "src/dictionaries/webrtc/rtc_error.h"
 #include "src/dictionaries/webrtc/rtp_transceiver_init.h"
-#include "src/enums/webrtc/ice_connection_state.h"
-#include "src/enums/webrtc/ice_gathering_state.h"
-#include "src/enums/webrtc/media_type.h"
-#include "src/enums/webrtc/peer_connection_state.h"
-#include "src/enums/webrtc/signaling_state.h"
+#include "src/enums/webrtc/ice_connection_state.h" // IWYU pragma: keep. Needed for conversions
+#include "src/enums/webrtc/ice_gathering_state.h" // IWYU pragma: keep. Needed for conversions
+#include "src/enums/webrtc/media_type.h" // IWYU pragma: keep. Needed for conversions.
+#include "src/enums/webrtc/peer_connection_state.h" // IWYU pragma: keep. Needed for conversions.
+#include "src/enums/webrtc/signaling_state.h" // IWYU pragma: keep. Needed for conversions.
 #include "src/functional/either.h"
 #include "src/functional/maybe.h"
 #include "src/interfaces/media_stream.h"
@@ -227,6 +225,7 @@ void RTCPeerConnection::OnAddTrack(
     rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver,
     const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>
         &streams) {
+  // TODO(jack): move away from these deprecated semantics
   if (_jinglePeerConnection->GetConfiguration().sdp_semantics !=
       webrtc::SdpSemantics::kPlanB) {
     return;
@@ -663,7 +662,7 @@ Napi::Value RTCPeerConnection::GetStats(const Napi::CallbackInfo &info) {
   }
 
   CONVERT_ARGS_OR_REJECT_AND_RETURN_NAPI(deferred, info, maybeSelector,
-                                         Maybe<MediaStreamTrack *>);
+                                         Maybe<MediaStreamTrack *>)
 
   auto callback = rtc::make_ref_counted<RTCStatsCollector>(this, deferred);
   if (maybeSelector.IsJust()) {

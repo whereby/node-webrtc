@@ -8,16 +8,14 @@
 namespace node_webrtc {
 
 struct ExtendedRTCConfiguration {
-  ExtendedRTCConfiguration()
-      : configuration(webrtc::PeerConnectionInterface::RTCConfiguration()),
-        portRange(UnsignedShortRange()) {}
+  ExtendedRTCConfiguration() : portRange(UnsignedShortRange()) {}
 
   ExtendedRTCConfiguration(
       const webrtc::PeerConnectionInterface::RTCConfiguration &configuration,
       const UnsignedShortRange portRange)
       : configuration(configuration), portRange(portRange) {}
 
-  webrtc::PeerConnectionInterface::RTCConfiguration configuration;
+  webrtc::PeerConnectionInterface::RTCConfiguration configuration{};
   UnsignedShortRange portRange;
 };
 

@@ -7,8 +7,6 @@
  */
 #pragma once
 
-#include <iosfwd>
-
 #include <node-addon-api/napi.h>
 
 namespace node_webrtc {
@@ -42,7 +40,7 @@ private:
   static const char *DOMExceptionNameToString(DOMExceptionName);
   static Napi::Value CreateDOMException(Napi::Env, std::string const &,
                                         DOMExceptionName);
-  static Napi::FunctionReference &_DOMException();
+  static Napi::FunctionReference &GetDOMException();
 };
 
 } // namespace node_webrtc

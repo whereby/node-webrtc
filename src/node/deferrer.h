@@ -8,6 +8,10 @@ namespace node_webrtc {
 
 class Deferrer {
 public:
+  Deferrer(const Deferrer &) = delete;
+  Deferrer(Deferrer &&) = delete;
+  Deferrer &operator=(const Deferrer &) = delete;
+  Deferrer &operator=(Deferrer &&) = delete;
   explicit Deferrer(Napi::Env);
   virtual ~Deferrer();
 
@@ -20,7 +24,7 @@ private:
   static void CallExecute(napi_env, napi_status, void *);
   Napi::Env _env;
   napi_async_work _work = nullptr;
-  std::mutex _work_mutex{};
+  std::mutex _work_mutex;
 };
 
 } // namespace node_webrtc

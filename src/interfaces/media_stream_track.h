@@ -7,14 +7,13 @@
  */
 #pragma once
 
-#include <memory>
-
 #include <node-addon-api/napi.h>
 #include <webrtc/api/media_stream_interface.h>
 #include <webrtc/api/scoped_refptr.h>
 
 #include "src/converters.h"
 #include "src/converters/napi.h"
+#include "src/enums/webrtc/track_state.h" // IWYU pragma: keep. Needed for conversions
 #include "src/node/async_object_wrap_with_loop.h"
 #include "src/node/wrap.h"
 
@@ -25,6 +24,10 @@ class PeerConnectionFactory;
 class MediaStreamTrack : public AsyncObjectWrapWithLoop<MediaStreamTrack>,
                          public webrtc::ObserverInterface {
 public:
+  MediaStreamTrack(const MediaStreamTrack &) = delete;
+  MediaStreamTrack(MediaStreamTrack &&) = delete;
+  MediaStreamTrack &operator=(const MediaStreamTrack &) = delete;
+  MediaStreamTrack &operator=(MediaStreamTrack &&) = delete;
   explicit MediaStreamTrack(const Napi::CallbackInfo &);
 
   ~MediaStreamTrack() override;

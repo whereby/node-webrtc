@@ -78,7 +78,7 @@ RTCDtlsTransport::RTCDtlsTransport(const Napi::CallbackInfo &info)
   // NOTE(mroberts): Ensure we create this.
   RTCIceTransport::wrap()->GetOrCreate(_factory, _transport->ice_transport());
 
-  _factory->_workerThread->Invoke<void>(RTC_FROM_HERE, [this]() {
+  _factory->WorkerThread()->Invoke<void>(RTC_FROM_HERE, [this]() {
     _transport->RegisterObserver(this);
     auto information = _transport->Information();
     _state = information.state();

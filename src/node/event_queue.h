@@ -51,7 +51,7 @@ public:
 
 private:
   std::queue<std::unique_ptr<Event<T>>> _events;
-  std::mutex _mutex{};
+  std::mutex _mutex;
 };
 
 } // namespace node_webrtc

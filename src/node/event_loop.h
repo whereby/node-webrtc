@@ -13,6 +13,10 @@ namespace node_webrtc {
 
 template <typename T> class EventLoop : private EventQueue<T> {
 public:
+  EventLoop(const EventLoop &) = delete;
+  EventLoop(EventLoop &&) = delete;
+  EventLoop &operator=(const EventLoop &) = delete;
+  EventLoop &operator=(EventLoop &&) = delete;
   virtual ~EventLoop() = default;
 
   void Dispatch(std::unique_ptr<Event<T>> event) {
@@ -29,11 +33,11 @@ public:
 protected:
   EventLoop(Napi::Env env, Napi::AsyncContext *context, T &target)
       : _context(context), _env(env), _target(target) {
-    uv_loop_t *loop;
+    uv_loop_t *loop{};
     auto status = napi_get_uv_event_loop(_env, &loop);
     {
       using Napi::Error;
-      NAPI_THROW_IF_FAILED_VOID(_env, status);
+      NAPI_THROW_IF_FAILED_VOID(_env, status)
     }
 
     uv_async_init(loop, &_async, [](auto handle) {
@@ -78,7 +82,7 @@ private:
   uv_async_t _async{};
   Napi::AsyncContext *_context;
   Napi::Env _env;
-  std::mutex _lock{};
+  std::mutex _lock;
   std::atomic<bool> _should_stop = {false};
   T &_target;
 };

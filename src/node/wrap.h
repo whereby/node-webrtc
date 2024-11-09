@@ -13,17 +13,17 @@ namespace node_webrtc {
 
 template <typename T, typename U, typename... V> class Wrap {
 public:
-  Wrap() = delete;
-
-  explicit Wrap(T (*Create)(V..., U)) : _Create(Create) {}
-
   Wrap(Wrap const &) = delete;
-
+  Wrap(Wrap &&) = delete;
   Wrap &operator=(Wrap const &) = delete;
+  Wrap &operator=(Wrap &&) = delete;
+  Wrap() = delete;
+  explicit Wrap(T (*create)(V..., U)) : _create(create) {}
+  ~Wrap() = default;
 
   T GetOrCreate(V... args, U key) {
     return _map.computeIfAbsent(key, [this, key, args...]() {
-      auto out = _Create(args..., key);
+      auto out = _create(args..., key);
       // NOTE(jack): If we do not do this, then out is liable to be
       // garbage-collected by Javascript, which can lead to all sorts of
       // nasty problems. So long as `Release()` is called appropriately for
@@ -45,7 +45,7 @@ public:
   }
 
 private:
-  T (*_Create)(V..., U);
+  T (*_create)(V..., U);
   BidiMap<U, T> _map;
 };
 

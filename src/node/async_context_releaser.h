@@ -21,14 +21,14 @@ public:
   void Release(Napi::AsyncContext *);
 
 protected:
-  void Execute(Napi::Env);
+  void Execute(Napi::Env) override;
 
 private:
   static AsyncContextReleaser *_default;
   static Napi::FunctionReference &constructor();
 
   std::queue<Napi::AsyncContext *> _contexts;
-  std::mutex _contexts_mutex{};
+  std::mutex _contexts_mutex;
 };
 
 } // namespace node_webrtc

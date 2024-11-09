@@ -35,6 +35,10 @@ class PeerConnectionFactory;
 class RTCPeerConnection : public AsyncObjectWrapWithLoop<RTCPeerConnection>,
                           public webrtc::PeerConnectionObserver {
 public:
+  RTCPeerConnection(const RTCPeerConnection &) = delete;
+  RTCPeerConnection(RTCPeerConnection &&) = delete;
+  RTCPeerConnection &operator=(const RTCPeerConnection &) = delete;
+  RTCPeerConnection &operator=(RTCPeerConnection &&) = delete;
   explicit RTCPeerConnection(const Napi::CallbackInfo &);
 
   ~RTCPeerConnection() override;

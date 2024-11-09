@@ -15,7 +15,6 @@
 #include "src/converters.h"
 #include "src/converters/interfaces.h"
 #include "src/dictionaries/node_webrtc/media_track_settings.h"
-#include "src/enums/webrtc/track_state.h"
 #include "src/interfaces/rtc_peer_connection/peer_connection_factory.h"
 
 namespace node_webrtc {
@@ -78,7 +77,7 @@ void MediaStreamTrack::Stop() {
   // there is a deadlock :)
   auto thisCopy = static_cast<webrtc::ObserverInterface *>(this);
   rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> trackCopy = _track;
-  _factory->_signalingThread->PostTask(RTC_FROM_HERE, [=]() { // NOLINT
+  _factory->SignalingThread()->PostTask(RTC_FROM_HERE, [=]() { // NOLINT
     trackCopy->UnregisterObserver(thisCopy);
   });
   _ended = true;
@@ -180,7 +179,7 @@ Napi::Value MediaStreamTrack::GetSettings(const Napi::CallbackInfo &info) {
         .latency = 0.0,
         .volume = 0.25,
     };
-    CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), settings, result, Napi::Value);
+    CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), settings, result, Napi::Value)
     return result;
   }
   assert(_track->kind() == _track->kVideoKind);
@@ -193,7 +192,7 @@ Napi::Value MediaStreamTrack::GetSettings(const Napi::CallbackInfo &info) {
       .frameRate = 30.0,
       .facingMode = "user",
   };
-  CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), settings, result, Napi::Value);
+  CONVERT_OR_THROW_AND_RETURN_NAPI(info.Env(), settings, result, Napi::Value)
   return result;
 }
 

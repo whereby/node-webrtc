@@ -15,8 +15,6 @@
 #include <webrtc/api/scoped_refptr.h>
 #include <webrtc/modules/audio_device/include/audio_device.h>
 
-#include "src/functional/maybe.h"
-
 namespace rtc {
 
 class NetworkManager;
@@ -35,9 +33,13 @@ namespace node_webrtc {
 
 class PeerConnectionFactory : public Napi::ObjectWrap<PeerConnectionFactory> {
 public:
+  PeerConnectionFactory(const PeerConnectionFactory &) = delete;
+  PeerConnectionFactory(PeerConnectionFactory &&) = delete;
+  PeerConnectionFactory &operator=(const PeerConnectionFactory &) = delete;
+  PeerConnectionFactory &operator=(PeerConnectionFactory &&) = delete;
   explicit PeerConnectionFactory(const Napi::CallbackInfo &);
 
-  ~PeerConnectionFactory();
+  ~PeerConnectionFactory() override;
 
   /**
    * Get or create the default PeerConnectionFactory. The default uses
@@ -58,6 +60,10 @@ public:
     return _factory;
   }
 
+  std::unique_ptr<rtc::Thread> &SignalingThread() { return _signalingThread; }
+
+  std::unique_ptr<rtc::Thread> &WorkerThread() { return _workerThread; }
+
   rtc::NetworkManager *getNetworkManager() { return _networkManager.get(); }
 
   rtc::PacketSocketFactory *getSocketFactory() { return _socketFactory.get(); }
@@ -68,10 +74,10 @@ public:
 
   static void Dispose();
 
+private:
   std::unique_ptr<rtc::Thread> _signalingThread;
   std::unique_ptr<rtc::Thread> _workerThread;
 
-private:
   static PeerConnectionFactory *_default;
   static std::mutex _mutex;
   static int _references;

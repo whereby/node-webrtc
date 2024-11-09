@@ -25,6 +25,7 @@
 #include <webrtc/rtc_base/ssl_adapter.h>
 #include <webrtc/rtc_base/thread.h>
 
+#include "src/functional/maybe.h"
 #include "src/webrtc/test_audio_device_module.h"
 
 namespace node_webrtc {

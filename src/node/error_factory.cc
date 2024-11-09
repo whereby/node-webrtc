@@ -13,7 +13,7 @@
 #include "src/converters/napi.h" // IWYU pragma: keep
 #include "src/functional/validation.h"
 
-Napi::FunctionReference &node_webrtc::ErrorFactory::_DOMException() {
+Napi::FunctionReference &node_webrtc::ErrorFactory::GetDOMException() {
   static Napi::FunctionReference func;
   return func;
 }
@@ -101,8 +101,8 @@ Napi::Value node_webrtc::ErrorFactory::CreateDOMException(
     Napi::Env env, const std::string &message, const DOMExceptionName name) {
   Napi::EscapableHandleScope scope(env);
   auto prefix = DOMExceptionNameToString(name);
-  if (!_DOMException().IsEmpty()) {
-    return scope.Escape(_DOMException().New(
+  if (!GetDOMException().IsEmpty()) {
+    return scope.Escape(GetDOMException().New(
         {Napi::String::New(env, message), Napi::String::New(env, prefix)}));
   }
   return scope.Escape(
@@ -117,7 +117,7 @@ node_webrtc::ErrorFactory::SetDOMException(const Napi::CallbackInfo &info) {
         .ThrowAsJavaScriptException();
     return info.Env().Undefined();
   }
-  _DOMException() = Napi::Persistent(maybeDOMException.UnsafeFromValid());
-  _DOMException().SuppressDestruct();
+  GetDOMException() = Napi::Persistent(maybeDOMException.UnsafeFromValid());
+  GetDOMException().SuppressDestruct();
   return info.Env().Undefined();
 }

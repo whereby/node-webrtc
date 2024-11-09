@@ -24,14 +24,17 @@ private:
   }
 
 public:
+  AsyncObjectWrap(const AsyncObjectWrap &) = delete;
+  AsyncObjectWrap(AsyncObjectWrap &&) = delete;
+  AsyncObjectWrap &operator=(const AsyncObjectWrap &) = delete;
+  AsyncObjectWrap &operator=(AsyncObjectWrap &&) = delete;
   AsyncObjectWrap(const char *name, const Napi::CallbackInfo &info)
-      : Napi::ObjectWrap<T>(info) {
-    this->_async_context =
-        new Napi::AsyncContext(info.Env(), name, this->Value());
+      : Napi::ObjectWrap<T>(info), _async_context(new Napi::AsyncContext(
+                                       info.Env(), name, this->Value())) {
     AsyncContextReleaser::GetDefault();
   }
 
-  virtual ~AsyncObjectWrap() { DestroyAsyncContext(); }
+  ~AsyncObjectWrap() override { DestroyAsyncContext(); }
 
   Napi::AsyncContext *context() { return _async_context; }
 

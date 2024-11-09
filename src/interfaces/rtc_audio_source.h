@@ -23,8 +23,11 @@ namespace node_webrtc {
 
 class RTCAudioTrackSource : public webrtc::LocalAudioSource {
 public:
-  RTCAudioTrackSource() {}
-
+  RTCAudioTrackSource(const RTCAudioTrackSource &) = delete;
+  RTCAudioTrackSource(RTCAudioTrackSource &&) = delete;
+  RTCAudioTrackSource &operator=(const RTCAudioTrackSource &) = delete;
+  RTCAudioTrackSource &operator=(RTCAudioTrackSource &&) = delete;
+  RTCAudioTrackSource() = default;
   ~RTCAudioTrackSource() override {
     PeerConnectionFactory::Release();
     _factory = nullptr;
@@ -33,15 +36,15 @@ public:
     _sinks.clear();
   }
 
-  SourceState state() const override {
+  [[nodiscard]] SourceState state() const override {
     return webrtc::MediaSourceInterface::SourceState::kLive;
   }
 
-  bool remote() const override { return false; }
+  [[nodiscard]] bool remote() const override { return false; }
 
   void PushData(RTCOnDataEventDict dict) {
     if (dict.numberOfFrames.IsJust()) {
-      std::shared_lock lock{_sinks_mutex};
+      std::shared_lock<std::shared_mutex> lock{_sinks_mutex};
       for (auto sink : _sinks) {
         sink->OnData(dict.samples, dict.bitsPerSample, dict.sampleRate,
                      dict.channelCount, dict.numberOfFrames.UnsafeFromJust());
@@ -53,12 +56,12 @@ public:
   }
 
   void AddSink(webrtc::AudioTrackSinkInterface *sink) override {
-    std::unique_lock lock{_sinks_mutex};
+    std::unique_lock<std::shared_mutex> lock{_sinks_mutex};
     _sinks.push_back(sink);
   }
 
   void RemoveSink(webrtc::AudioTrackSinkInterface *sink) override {
-    std::unique_lock lock{_sinks_mutex};
+    std::unique_lock<std::shared_mutex> lock{_sinks_mutex};
     auto it = std::find(_sinks.begin(), _sinks.end(), sink);
 
     if (it != _sinks.end()) {
