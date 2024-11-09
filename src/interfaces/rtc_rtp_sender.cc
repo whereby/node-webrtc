@@ -58,8 +58,7 @@ RTCRtpSender::~RTCRtpSender() {
 
   wrap()->Release(this);
   // Decrement refcount from e.g. wrap()->Create if we aren't already down to 0
-  if (!this->Value().IsEmpty())
-  {
+  if (!this->Value().IsEmpty()) {
     this->Unref();
   }
 }
