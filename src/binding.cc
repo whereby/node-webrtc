@@ -57,12 +57,12 @@ static Napi::Object Init(Napi::Env env, Napi::Object exports) {
   node_webrtc::RTCSctpTransport::Init(env, exports);
   node_webrtc::RTCVideoSink::Init(env, exports);
   node_webrtc::RTCVideoSource::Init(env, exports);
-#ifdef DEBUG
+#if DEBUG && defined(__x86_64__)
   node_webrtc::Test::Init(env, exports);
 #endif
 
-  auto status =
-      napi_add_env_cleanup_hook(env, [](void *) { dispose(nullptr); }, nullptr);
+  auto status = napi_add_env_cleanup_hook(
+      env, [](void *) { dispose(nullptr); }, nullptr);
   assert(status == napi_ok);
   (void)status; // Ignore unused variable warning in release builds
 

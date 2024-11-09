@@ -5,7 +5,7 @@
  * project authors may be found in the AUTHORS file in the root of the source
  * tree.
  */
-#ifdef DEBUG
+#if DEBUG && defined(__x86_64__)
 
 #include "src/test.h"
 
@@ -126,4 +126,4 @@ void node_webrtc::Test::Init(Napi::Env env, Napi::Object exports) {
   exports.Set("test", func);
 }
 
-#endif // DEBUG
+#endif // DEBUG && defined(__x86_64__)

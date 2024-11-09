@@ -16,11 +16,12 @@
             cmake
             clang
             clang-tools
+            darwin.apple_sdk.frameworks.AVFoundation
+            darwin.apple_sdk.frameworks.AppKit
+            darwin.apple_sdk.frameworks.Foundation
             ninja
             nodejs_20
             pkg-config
-            xcbuild
-            xcodes
             zlib
           ];
         };
