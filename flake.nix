@@ -9,7 +9,7 @@
         pkgs = nixpkgs.legacyPackages.${system};
         lib = nixpkgs.lib;
       in
-      # if lib.strings.hasSuffix system "darwin" then
+      if lib.strings.hasSuffix "darwin" system then
       {
         devShells.default = pkgs.mkShell {
           nativeBuildInputs = with pkgs; [
@@ -26,21 +26,21 @@
           ];
         };
       }
-      # else
-      # {
-      #   devShells.default = (pkgs.buildFHSEnv.override {
-      #     stdenv = pkgs.gcc10Stdenv;
-      #   } {
-      #     name = "node-webrtc";
-      #     targetPkgs = pkgs: (with pkgs; [
-      #       cmake
-      #       gcc10
-      #       ninja
-      #       nodejs_20
-      #       pkg-config
-      #       zlib
-      #     ]);
-      #   }).env;
-      # }
+      else
+      {
+        devShells.default = (pkgs.buildFHSEnv.override {
+          stdenv = pkgs.gcc10Stdenv;
+        } {
+          name = "node-webrtc";
+          targetPkgs = pkgs: (with pkgs; [
+            cmake
+            gcc10
+            ninja
+            nodejs_20
+            pkg-config
+            zlib
+          ]);
+        }).env;
+      }
     );
 }
