@@ -7,8 +7,9 @@
  */
 #pragma once
 
-#include <atomic>
-#include <memory>
+#include <mutex>
+#include <shared_mutex>
+#include <vector>
 
 #include <node-addon-api/napi.h>
 #include <webrtc/api/media_stream_interface.h>
@@ -22,39 +23,57 @@ namespace node_webrtc {
 
 class RTCAudioTrackSource : public webrtc::LocalAudioSource {
 public:
-  RTCAudioTrackSource() {}
-
+  RTCAudioTrackSource(const RTCAudioTrackSource &) = delete;
+  RTCAudioTrackSource(RTCAudioTrackSource &&) = delete;
+  RTCAudioTrackSource &operator=(const RTCAudioTrackSource &) = delete;
+  RTCAudioTrackSource &operator=(RTCAudioTrackSource &&) = delete;
+  RTCAudioTrackSource() = default;
   ~RTCAudioTrackSource() override {
     PeerConnectionFactory::Release();
     _factory = nullptr;
+    // No need to acquire mutex, since this MUST only be destroyed when there
+    // are no other functions being called on it
+    _sinks.clear();
   }
 
-  SourceState state() const override {
+  [[nodiscard]] SourceState state() const override {
     return webrtc::MediaSourceInterface::SourceState::kLive;
   }
 
-  bool remote() const override { return false; }
+  [[nodiscard]] bool remote() const override { return false; }
 
   void PushData(RTCOnDataEventDict dict) {
-    webrtc::AudioTrackSinkInterface *sink = _sink;
-    if (sink && dict.numberOfFrames.IsJust()) {
-      sink->OnData(dict.samples, dict.bitsPerSample, dict.sampleRate,
-                   dict.channelCount, dict.numberOfFrames.UnsafeFromJust());
+    if (dict.numberOfFrames.IsJust()) {
+      std::shared_lock<std::shared_mutex> lock{_sinks_mutex};
+      for (auto sink : _sinks) {
+        sink->OnData(dict.samples, dict.bitsPerSample, dict.sampleRate,
+                     dict.channelCount, dict.numberOfFrames.UnsafeFromJust());
+      }
     }
+
     // HACK(mroberts): I'd rather we use a smart pointer.
     delete[] dict.samples;
   }
 
-  void AddSink(webrtc::AudioTrackSinkInterface *sink) override { _sink = sink; }
+  void AddSink(webrtc::AudioTrackSinkInterface *sink) override {
+    std::unique_lock<std::shared_mutex> lock{_sinks_mutex};
+    _sinks.push_back(sink);
+  }
 
-  void RemoveSink(webrtc::AudioTrackSinkInterface *) override {
-    _sink = nullptr;
+  void RemoveSink(webrtc::AudioTrackSinkInterface *sink) override {
+    std::unique_lock<std::shared_mutex> lock{_sinks_mutex};
+    auto it = std::find(_sinks.begin(), _sinks.end(), sink);
+
+    if (it != _sinks.end()) {
+      _sinks.erase(it);
+    }
   }
 
 private:
   PeerConnectionFactory *_factory = PeerConnectionFactory::GetOrCreateDefault();
 
-  std::atomic<webrtc::AudioTrackSinkInterface *> _sink = {nullptr};
+  std::shared_mutex _sinks_mutex;
+  std::vector<webrtc::AudioTrackSinkInterface *> _sinks;
 };
 
 class RTCAudioSource : public Napi::ObjectWrap<RTCAudioSource> {
